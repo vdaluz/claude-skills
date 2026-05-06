@@ -40,9 +40,20 @@ Reusable skills for planning, research, code review, and PRD writing. No externa
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
 | `create-prd` | Create a PRD for a project or feature |
 
-### Coming soon
+### [plane-workflow](plugins/plane-workflow/)
 
-- `plane-workflow` — Skills for [Plane](https://plane.so) project management (requires the Plane MCP server).
+Skills for [Plane](https://plane.so) project management.
+
+**Prerequisite:** [Plane MCP server](plugins/plane-workflow/README.md#prerequisite-plane-mcp-server) configured.
+
+| Skill | Description |
+|---|---|
+| `start-issue` | Fetch a Plane issue, set it In Progress, and produce an implementation plan |
+| `wrap-up-issue` | Commit, close the worktree, and mark a Plane issue Done |
+| `continue-issue` | Resume work on an issue from a previous session by replaying Plane comments |
+| `create-issue` | Create a new Plane issue in Backlog |
+| `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
+| `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
 
 ## Manual install (no marketplace)
 

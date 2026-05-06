@@ -25,9 +25,23 @@ Skills for [cmux](https://github.com/vdaluz/cmux) terminal multiplexer users.
 |---|---|
 | `read-surface` | Read a terminal pane or browser tab without running a separate command |
 
+### [general-workflow](plugins/general-workflow/)
+
+Reusable skills for planning, research, code review, and PRD writing. No external tools required.
+
+| Skill | Description |
+|---|---|
+| `roast` | Critically review a plan, code, or diff — blunt, prioritized by severity |
+| `plan-only` | Produce a concrete implementation plan without making any changes |
+| `research` | Research a topic across in-repo docs, official docs, and communities |
+| `audit-rules` | Audit CLAUDE.md files and skills across repos for redundancy and conflicts |
+| `meta-improvement` | Update a rule or skill based on a mistake or better approach found during work |
+| `summarize-active-rules` | Summarize which rules and skills are active in the current context |
+| `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
+| `create-prd` | Create a PRD for a project or feature |
+
 ### Coming soon
 
-- `general-workflow` — Reusable skills for planning, research, code review, and PRD writing (no external tools required).
 - `plane-workflow` — Skills for [Plane](https://plane.so) project management (requires the Plane MCP server).
 
 ## Manual install (no marketplace)

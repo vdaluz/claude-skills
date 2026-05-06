@@ -1,0 +1,10 @@
+{
+  "name": "plane-workflow",
+  "description": "Skills for Plane project management — start, continue, and close issues; convert PRDs and spikes into issues",
+  "version": "0.1.0",
+  "author": {
+    "name": "Victor Da Luz",
+    "url": "https://github.com/vdaluz"
+  },
+  "homepage": "https://github.com/vdaluz/claude-skills"
+}

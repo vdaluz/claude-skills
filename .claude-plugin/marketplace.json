@@ -12,6 +12,14 @@
       "version": "0.1.0",
       "category": "developer-tools",
       "keywords": ["cmux", "terminal", "read-surface", "screen-reading"]
+    },
+    {
+      "name": "general-workflow",
+      "source": "./plugins/general-workflow",
+      "description": "Reusable skills for planning, research, code review, and PRD writing — no external tools required",
+      "version": "0.1.0",
+      "category": "productivity",
+      "keywords": ["planning", "research", "review", "prd", "workflow"]
     }
   ]
 }

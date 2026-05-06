@@ -1,0 +1,17 @@
+{
+  "name": "vdaluz-skills",
+  "owner": {
+    "name": "Victor Da Luz",
+    "url": "https://github.com/vdaluz"
+  },
+  "plugins": [
+    {
+      "name": "cmux-tools",
+      "source": "./plugins/cmux-tools",
+      "description": "Skills for cmux terminal multiplexer users — read terminal panes, browser tabs, and surfaces from Claude",
+      "version": "0.1.0",
+      "category": "developer-tools",
+      "keywords": ["cmux", "terminal", "read-surface", "screen-reading"]
+    }
+  ]
+}

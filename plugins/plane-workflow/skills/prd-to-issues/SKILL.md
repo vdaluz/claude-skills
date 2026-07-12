@@ -1,6 +1,6 @@
 ---
 name: prd-to-issues
-description: Parse a PRD and create Plane issues from it, one per spike and one per feature area.
+description: Parse a PRD and create Plane issues from it, one per spike and one per feature area. Use when the user wants to "turn this PRD into issues", "break down the PRD", or "create issues from the spec" after a create-prd doc exists and is ready to become tracked work.
 ---
 
 Parse a PRD and create a structured set of Plane issues from it.

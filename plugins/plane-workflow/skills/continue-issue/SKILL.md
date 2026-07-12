@@ -1,3 +1,8 @@
+---
+name: continue-issue
+description: Resume work on a Plane issue from a previous session by rebuilding context from Plane comments and codebase state, not chat history. Use when the user asks to "continue issue X", "pick this back up", or resumes a session on a previously-started LAB/VDA/etc. issue. Re-enters the existing worktree/branch rather than starting a new one.
+---
+
 Resume work on a Plane issue from a previous session.
 
 Arguments: issue ID (optional) and what to do next (1 sentence).

@@ -1,3 +1,8 @@
+---
+name: meta-improvement
+description: Update a rule, skill, or CLAUDE.md entry based on a mistake, a pattern repeated 3+ times, or a better approach discovered during work. Use when a mistake just happened that a rule could have prevented, or the user says "remember this", "update the rule", or asks to fix ambiguous/ignored guidance. Diagnoses root cause (missing/ambiguous/ignored/wrong rule) before editing; keeps changes minimal.
+---
+
 Update a rule or skill based on a mistake, repeated pattern, or better approach discovered during work.
 
 Arguments: what went wrong or what pattern was found, desired correction, which rule/skill is affected (optional).

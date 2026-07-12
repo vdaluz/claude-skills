@@ -1,3 +1,8 @@
+---
+name: wrap-up-issue
+description: Wrap up and close a Plane issue by verifying work, writing a blog draft, routing KB-worthy findings, committing, merging to main, deleting the branch, and setting Done. Use when the user asks to "wrap up", "close out", or "finish" a Plane issue, or after implementation work is verified and ready to land. Never invoked manually mid-task; this is the only path that should merge or close an issue.
+---
+
 Wrap up and close a Plane issue.
 
 Arguments: issue ID (optional — auto-detect from conversation context) and what "done" means (1–2 bullets).

@@ -17,7 +17,7 @@
       "name": "general-workflow",
       "source": "./plugins/general-workflow",
       "description": "Reusable skills for planning, research, code review, and PRD writing — no external tools required",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "category": "productivity",
       "keywords": ["planning", "research", "review", "prd", "workflow"]
     },
@@ -25,7 +25,7 @@
       "name": "plane-workflow",
       "source": "./plugins/plane-workflow",
       "description": "Skills for Plane project management — start, continue, and close issues; convert PRDs and spikes into issues",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "project-management",
       "keywords": ["plane", "issues", "project-management", "prd", "workflow"]
     }

@@ -1,6 +1,6 @@
 ---
 name: spike-to-issues
-description: Convert a completed spike's findings into concrete implementation issues in Plane.
+description: Convert a completed spike's findings into concrete implementation issues in Plane. Use when the user wants to "turn spike findings into issues", "convert this spike", or after /wrap-up-issue on a spike that has a findings comment. Requires a spike that is Done or has findings already posted — not for spikes still in progress.
 ---
 
 Convert the findings from a completed spike issue into actionable implementation issues.
@@ -21,7 +21,7 @@ Run this after `/wrap-up-issue` on a spike, or any time a spike has documented f
    - If the spike concluded "this API does NOT support X" → create a new issue for the fallback approach (describe the fallback clearly; reference the spike and why the original plan changed).
    - If the spike concluded "blocked / impossible" → create an issue to discuss/decide an alternative, or flag to the user if there's no clear path forward.
    - If the spike produced a decision (e.g. "use fine-grained PAT, not GitHub App") → update the description of the relevant existing implementation issue with that decision. Do not create a new issue just to record a decision.
-5. Present the proposed changes (new issues + description updates to existing issues) before creating anything. Wait for confirmation.
+5. **STOP. Present the full proposed issue list before creating anything.** Format as a numbered list with title, priority, and one-line summary for each new issue; separately list any existing issues that will be updated. Do not proceed until the user explicitly approves (e.g. "go", "create them", "looks good"). If the user asks to modify or drop an issue, update the list and re-present before creating.
 6. After confirmation:
    - Use the **create-issue** skill for any new issues.
    - For existing issues that need description updates, use `mcp__plane__update_work_item`.
@@ -31,6 +31,7 @@ Run this after `/wrap-up-issue` on a spike, or any time a spike has documented f
 
 ## Rules
 
+- **NEVER create any issue without explicit user approval of the full proposed list (step 5).** Presenting the list and proceeding without a response is not allowed.
 - Do not create implementation issues for findings that are already covered by existing issues — update those instead.
 - If findings contradict the PRD (e.g. an API doesn't work as assumed), flag this explicitly. The PRD may need updating.
 - Never create a new spike to follow up a spike unless the original spike surfaced a genuinely new unknown. A new unknown is fair game; "we need to research more of the same thing" is a planning failure.

@@ -39,6 +39,7 @@ Reusable skills for planning, research, code review, and PRD writing. No externa
 | `summarize-active-rules` | Summarize which rules and skills are active in the current context |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
 | `create-prd` | Create a PRD for a project or feature |
+| `new-repo` | Scaffold a new repo with CLAUDE.md, baseline settings.json, and portfolio registration |
 
 ### [plane-workflow](plugins/plane-workflow/)
 

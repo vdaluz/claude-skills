@@ -1,3 +1,8 @@
+---
+name: summarize-active-rules
+description: Summarize which CLAUDE.md rules and skills are active and most relevant to the current file, task, or area of work. Use when the user asks "what rules apply here", "what skills are available", or wants a quick diagnostic of active guidance before starting unfamiliar work.
+---
+
 Summarize which rules and skills are active in the current context.
 
 Arguments: current file(s), task, or area of work (optional).

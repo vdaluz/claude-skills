@@ -1,3 +1,8 @@
+---
+name: plan-only
+description: Produce a concrete, research-grounded implementation plan without making any changes. Use when the user asks to "just plan this", "don't implement yet", or wants a plan reviewed before any files are touched. Every step lists what/where/why/verify; no placeholders, no "TBD", no edits or commands run.
+---
+
 Produce a concrete implementation plan without making any changes.
 
 Arguments: task description, files/areas involved (if known).

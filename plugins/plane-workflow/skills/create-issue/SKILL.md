@@ -1,3 +1,8 @@
+---
+name: create-issue
+description: Create a new Plane issue in the correct project with the correct state and required labels. Use when the user asks to "create an issue", "file a ticket", or "add this to the backlog" for LAB/VDA/BLG/WQ1K. Always creates in Backlog, never Todo; applies the "v3" label automatically for LAB issues.
+---
+
 Create a new Plane issue.
 
 Arguments: project identifier (e.g. LAB, WQ1K), title, description, labels (optional).

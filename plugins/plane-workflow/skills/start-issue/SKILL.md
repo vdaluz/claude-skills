@@ -1,3 +1,8 @@
+---
+name: start-issue
+description: Start work on a Plane issue, fetching context, setting In Progress, isolating the work in a worktree or branch, and producing a research-backed plan. Use when the user asks to "start issue X", "begin work on LAB-123", or gives an issue ID to work on. Never edits files or runs commands before the user says "go" on the plan.
+---
+
 Start work on a Plane issue.
 
 Arguments: issue ID (e.g. LAB-123) and optionally what we're doing today (1 sentence).

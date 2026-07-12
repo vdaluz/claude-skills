@@ -45,7 +45,7 @@ Arguments: issue ID (e.g. LAB-123) and optionally what we're doing today (1 sent
 
 6. Once user approves the plan:
    - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment and remind the user to run `/wrap-up-issue` and then `/spike-to-issues` to convert findings into implementation issues.
-   - **Non-spike:** check the project `CLAUDE.md` for a "No worktrees" directive **before** calling `EnterWorktree`. If the project opts out, create a feature branch directly (`git checkout -b <issue-id>-<slug>`). Otherwise, create a worktree using `EnterWorktree` (branch named after the issue ID, e.g. `lab-571-slug`). In either case, post the plan as a Plane comment, then begin making changes.
+   - **Non-spike:** work directly on `main` by default — isolation is opt-in now, not mandatory. Only use a worktree (`EnterWorktree`, branch named after the issue ID e.g. `lab-571-slug`) or a branch (`git checkout -b <issue-id>-<slug>`) when this session genuinely needs isolation (e.g. another agent is actively working the same repo, or the user asks for one). `EnterWorktree` always prompts for confirmation, so reach for it deliberately. Post the plan as a Plane comment, then begin making changes.
 
 Dual documentation: put full detail in Plane; always include a usable summary in chat.
 

@@ -39,13 +39,13 @@ Arguments: issue ID (optional — auto-detect from conversation context) and wha
 
 8. Clean up the worktree if one was used: run `ExitWorktree` (or `git worktree remove <path>` if the tool is unavailable). Confirm the worktree is removed before proceeding.
 
-9. **Delete the feature branch (mandatory).** Delete both local and remote:
+9. **If a branch or worktree was used, delete the branch (mandatory).** Delete both local and remote:
    ```bash
    git branch -d <branch>
    git push origin --delete <branch>
    git fetch --prune
    ```
-   Confirm `git branch -a` shows only `main` (and `origin/main`). If the branch no longer exists on the remote (already auto-deleted), skip the remote delete — but always delete the local branch.
+   Confirm `git branch -a` shows only `main` (and `origin/main`). If the branch no longer exists on the remote (already auto-deleted), skip the remote delete — but always delete the local branch. Skip this step entirely if you worked directly on `main`.
 
 10. **Close the task list (mandatory).** Use `TaskList` to fetch all tasks for this session. Mark every open task as `completed` or `cancelled` via `TaskUpdate`. If a task was genuinely not completed (deferred to a future issue), mark it `cancelled` and note the follow-up issue ID.
 

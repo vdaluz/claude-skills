@@ -1,7 +1,7 @@
 {
   "name": "general-workflow",
   "description": "Reusable skills for planning, research, code review, and PRD writing — no external tools required",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Victor Da Luz",
     "url": "https://github.com/vdaluz"

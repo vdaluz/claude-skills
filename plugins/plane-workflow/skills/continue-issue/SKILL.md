@@ -20,7 +20,7 @@ Arguments: issue ID (optional) and what to do next (1 sentence).
 
 4. **Check codebase state**: Read relevant state files, configs, or code to verify what was actually deployed (don't rely only on Plane comments — the codebase is ground truth).
 
-5. **Check for an existing worktree**: if one exists for this issue branch (e.g. `lab-123-title`), use `EnterWorktree` to resume inside it. If not, create one with `EnterWorktree` before making any changes.
+5. **Resume directly on `main` by default.** If a worktree or branch already exists for this issue from a prior session (e.g. `lab-123-title`), resume inside it (`EnterWorktree` for a worktree, `git checkout <branch>` for a plain branch) rather than abandoning that history. Otherwise just continue on the current checkout unless this session genuinely needs isolation (e.g. another agent is actively working the same repo), in which case create one — `EnterWorktree` always prompts for confirmation now.
 
 6. **Identify next atomic step**: one action, which files/areas, how to verify it. For learning-oriented projects, explain why this step is needed, not just what it is. Do not implement unless the user says to.
 

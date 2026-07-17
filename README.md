@@ -69,3 +69,7 @@ Then invoke as `/read-surface` (no namespace prefix).
 ## Contributing
 
 PRs welcome. See [Anthropic's skill docs](https://docs.anthropic.com/en/docs/claude-code/skills) for the `SKILL.md` format.
+
+## Author
+
+Built by [Victor Da Luz](https://vdaluz.com).

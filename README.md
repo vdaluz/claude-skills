@@ -39,7 +39,6 @@ Reusable skills for planning, research, code review, and PRD writing. No externa
 | `summarize-active-rules` | Summarize which rules and skills are active in the current context |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
 | `create-prd` | Create a PRD for a project or feature |
-| `new-repo` | Scaffold a new repo with CLAUDE.md, baseline settings.json, and portfolio registration |
 
 ### [plane-workflow](plugins/plane-workflow/)
 
@@ -50,7 +49,6 @@ Skills for [Plane](https://plane.so) project management.
 | Skill | Description |
 |---|---|
 | `start-issue` | Fetch a Plane issue, set it In Progress, and produce an implementation plan |
-| `wrap-up-issue` | Commit, close the worktree, and mark a Plane issue Done |
 | `continue-issue` | Resume work on an issue from a previous session by replaying Plane comments |
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
@@ -69,6 +67,26 @@ Then invoke as `/read-surface` (no namespace prefix).
 ## Contributing
 
 PRs welcome. See [Anthropic's skill docs](https://docs.anthropic.com/en/docs/claude-code/skills) for the `SKILL.md` format.
+
+## Maintainer: export checklist
+
+Skills here are hand-copied from a personal canonical `~/.claude/skills` and edited down for a
+public audience. Before exporting or re-syncing a skill, check for:
+
+- [ ] Local absolute paths (`/Users/<name>/...`) — genericize or remove.
+- [ ] Personal memory-file references (a specific cached-IDs filename, etc.) — describe the
+      pattern generically ("a cached reference file, if you keep one") instead of naming it.
+- [ ] Hardcoded project/issue-ID prefixes presented as universal (e.g. `LAB-`, `WQ1K-`) — fine as
+      one illustrative example among others, not fine as the only case handled.
+- [ ] References to skills or shared files that don't exist in this repo — `grep -rn
+      "<skill-name>" plugins/` for anything you're about to remove, and grep the file you're
+      exporting for its own cross-references before publishing it.
+- [ ] OS-specific hard gates (e.g. `pbcopy`) without a documented fallback for other platforms.
+- [ ] Personal infrastructure specifics (specific internal tool names, specific config file paths
+      from one person's setup) presented as general guidance.
+- [ ] Time-sensitive internal narration ("used to be mandatory, now it isn't") — state the current
+      policy plainly instead of narrating its history.
+- [ ] README skill-count tables (root and per-plugin) match the actual directory contents.
 
 ## Author
 

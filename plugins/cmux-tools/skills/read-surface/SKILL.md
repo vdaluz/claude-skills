@@ -7,7 +7,7 @@ Observe what's on a cmux surface — terminal or browser — in the current or a
 
 **Context:** The user almost always works inside cmux. You are running inside a cmux Claude surface (`$CMUX_SURFACE_ID`). Use this to observe other panes before running duplicate commands — e.g. check if a server is already running, read a log tail, or inspect what a browser is showing.
 
-**Exception:** The review-alerts scheduled job runs outside cmux (LaunchAgent). Do not assume cmux is available in that context.
+**Exception:** background or scheduled jobs (a cron job, a LaunchAgent, a CI runner) run outside cmux. Do not assume cmux is available in that context.
 
 ## 1. Discover surfaces
 
@@ -21,7 +21,7 @@ Returns a tree: windows → workspaces → panes → surfaces. Each surface show
 - `◀ here` = your current Claude surface — skip it
 - URL for browser surfaces
 
-Typical workspace layout:
+Example workspace layout (yours will vary — read the actual tree output, don't assume this shape):
 | Pane | Surface(s) | What it contains |
 |---|---|---|
 | pane:1 (focused) | Claude `[terminal]` | You — skip |

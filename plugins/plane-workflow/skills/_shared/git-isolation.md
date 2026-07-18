@@ -1,14 +1,12 @@
 # Git isolation protocol (worktrees/branches)
 
-Shared by `start-issue`, `continue-issue`, and `wrap-up-issue`. Read this once; each skill only
+Shared by `start-issue` and `continue-issue`. Read this once; each skill only
 states what's specific to its own step.
 
 ## Default: work directly on main
 
-Isolation used to be mandatory when a large backlog meant several agents worked a repo at once;
-that pressure is gone. Default to working directly on `main` unless this session genuinely needs
-isolation — e.g. you know another agent is actively working this repo right now, or the user asks
-for one.
+Default to working directly on `main` unless this session genuinely needs isolation — e.g. you
+know another agent is actively working this repo right now, or the user asks for one.
 
 ## Creating isolation
 
@@ -44,11 +42,11 @@ Then clean up:
 
 Skip all of the above if you worked directly on `main`.
 
-## `iac/ansible/group_vars/all/vault.yml` merge conflicts
+## Encrypted or binary config merge conflicts
 
-A single encrypted blob — git cannot auto-merge it, so a rebase/merge conflict here needs manual
-handling: do **not** edit the conflict markers. Decrypt both sides, merge the plaintext keeping
-both branches' changes, re-encrypt, then continue. Full protocol:
-`~/Repos/vdaluz-kb/infrastructure/ansible-vault-merge-conflicts.md`. If you know up front that a
-change will touch this file, note the risk early — keep the edit small and rebase right before
-landing to minimize the conflict window.
+If your project has a file git can't auto-merge (an encrypted secrets blob, a lockfile with
+binary sections), a rebase/merge conflict there needs manual handling — do **not** edit the
+conflict markers directly. Decrypt or otherwise render both sides to a mergeable form, merge
+keeping both branches' changes, then re-encrypt/re-derive before continuing. If you know up front
+that a change will touch such a file, note the risk early and rebase right before landing to
+minimize the conflict window.

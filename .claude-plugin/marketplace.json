@@ -24,7 +24,7 @@
     {
       "name": "plane-workflow",
       "source": "./plugins/plane-workflow",
-      "description": "Skills for Plane project management — start, continue, and close issues; convert PRDs and spikes into issues",
+      "description": "Skills for Plane project management — start and continue issues; convert PRDs and spikes into issues",
       "version": "0.2.0",
       "category": "project-management",
       "keywords": ["plane", "issues", "project-management", "prd", "workflow"]

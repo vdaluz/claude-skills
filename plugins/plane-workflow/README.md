@@ -37,6 +37,9 @@ After install, skills are available namespaced: `/plane-workflow:start-issue`, `
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
 | `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
+| `whats-next` | Show what's next for a Plane project across In Progress/Rolling/Todo/Backlog/Blocked |
+| `pick-next-issue` | Recommend 3 ranked next-issue candidates instead of a raw list |
+| `reprioritize-backlog` | Reorder a Backlog by dependency + urgency, applied only after explicit approval |
 
 ## Optional integrations
 

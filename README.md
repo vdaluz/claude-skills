@@ -35,7 +35,10 @@ Reusable skills for planning, research, code review, and PRD writing. No externa
 | `research` | Research a topic across in-repo docs, official docs, and communities |
 | `meta-improvement` | Update a rule or skill based on a mistake or better approach found during work |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
+| `fewer-permission-prompts` | Scan transcripts for repeated read-only commands and propose an allowlist |
 | `create-prd` | Create a PRD for a project or feature |
+| `browser-verify` | Drive a real browser via Playwright MCP to verify a UI change before calling it done |
+| `stale-repos` | Scan git repos under a root for stale branches/worktrees and offer safe cleanup |
 
 ### [plane-workflow](plugins/plane-workflow/)
 
@@ -50,6 +53,9 @@ Skills for [Plane](https://plane.so) project management.
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
 | `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
+| `whats-next` | Show what's next for a Plane project across In Progress/Rolling/Todo/Backlog/Blocked |
+| `pick-next-issue` | Recommend 3 ranked next-issue candidates instead of a raw list |
+| `reprioritize-backlog` | Reorder a Backlog by dependency + urgency, applied only after explicit approval |
 
 ## Manual install (no marketplace)
 

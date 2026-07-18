@@ -25,7 +25,7 @@ After install, skills are available namespaced: `/general-workflow:roast`, `/gen
 
 ### Optional integrations
 
-- `create-prd` and `research` post to Plane if the [Plane MCP server](https://github.com/makeplane/mcp-server-plane) is configured — falls back to chat output otherwise.
+- `create-prd` and `research` post to Plane if the [Plane MCP server](https://github.com/makeplane/plane-mcp-server) is configured — falls back to chat output otherwise.
 
 ## Manual install (without the marketplace)
 

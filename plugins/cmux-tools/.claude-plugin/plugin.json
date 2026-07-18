@@ -6,5 +6,8 @@
     "name": "Victor Da Luz",
     "url": "https://github.com/vdaluz"
   },
-  "homepage": "https://github.com/vdaluz/claude-skills"
+  "homepage": "https://github.com/vdaluz/claude-skills",
+  "repository": "https://github.com/vdaluz/claude-skills",
+  "license": "MIT",
+  "keywords": ["cmux", "terminal", "read-surface", "screen-reading"]
 }

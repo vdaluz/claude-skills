@@ -1,6 +1,6 @@
 ---
 name: roast
-description: Critically review a plan, code, or diff and surface real issues, ranked by severity, with no softening. Use when the user asks to "roast", "critique", or "review" a plan/diff/code for correctness, rule violations, scope creep, or security issues before it ships. Not for style-only nitpicks; use /code-review or /simplify for those.
+description: Critically review a plan, code, or diff and surface real issues bluntly, ranked by severity. Use when the user asks to "roast", "critique", or "review" a plan/diff/code for correctness, rule violations, scope creep, or security issues before it ships.
 ---
 
 Critically review a plan, code, or diff and surface real issues.

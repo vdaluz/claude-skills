@@ -1,6 +1,6 @@
 ---
 name: spike-to-issues
-description: Convert a completed spike's findings into concrete implementation issues in Plane. Use when the user wants to "turn spike findings into issues", "convert this spike", or after /wrap-up-issue on a spike that has a findings comment. Requires a spike that is Done or has findings already posted — not for spikes still in progress.
+description: Convert a completed spike's findings into concrete implementation issues in Plane. Use when the user wants to "turn spike findings into issues", "convert this spike", or after closing out a spike that has a findings comment. Requires a spike that is Done or has findings already posted — not for spikes still in progress.
 ---
 
 Convert the findings from a completed spike issue into actionable implementation issues.
@@ -9,7 +9,7 @@ Arguments: spike issue ID (e.g. BLG-3). Must be a spike that is either Done or h
 
 ## When to use
 
-Run this after `/wrap-up-issue` on a spike, or any time a spike has documented findings and the implementation issues haven't been created yet. This is the bridge between research and build.
+Run this after closing out a spike, or any time a spike has documented findings and the implementation issues haven't been created yet. This is the bridge between research and build.
 
 ## Steps
 

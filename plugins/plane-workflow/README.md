@@ -28,14 +28,13 @@ Or configure it in `~/.claude/settings.json` under `env`.
 /plugin install plane-workflow@vdaluz-skills
 ```
 
-After install, skills are available namespaced: `/plane-workflow:start-issue`, `/plane-workflow:wrap-up-issue`, etc.
+After install, skills are available namespaced: `/plane-workflow:start-issue`, `/plane-workflow:continue-issue`, etc.
 
 ## Skills
 
 | Skill | Description |
 |---|---|
 | `start-issue` | Fetch a Plane issue, set it In Progress, and produce an implementation plan |
-| `wrap-up-issue` | Commit, close the worktree, and mark a Plane issue Done |
 | `continue-issue` | Resume work on an issue from a previous session by replaying Plane comments |
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |

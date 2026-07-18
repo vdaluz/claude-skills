@@ -9,7 +9,7 @@ Design: this script is the deterministic core. It NEVER mutates anything (no fet
 --fetch, no delete ever). The calling Claude skill does grouping, judgment, and — only behind
 explicit confirmation — the destructive cleanup via prompted git commands.
 
-Refinements baked in (from the LAB-1036 spike):
+Refinements baked in:
   1. "gone" upstream is detected via `%(upstream:track)` == [gone], NOT `@{u}` presence
      (rev-parse @{u} still returns the configured name after the remote ref is deleted).
      [gone] is also the only reliable proxy for squash-merged branches.

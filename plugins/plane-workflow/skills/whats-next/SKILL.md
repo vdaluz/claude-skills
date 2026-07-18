@@ -41,7 +41,10 @@ Partition by state name/group:
 - **Backlog** (group `backlog`)
 - **Blocked** (a state literally named "Blocked", if the project has one)
 
-Apply `--include-labels`/`--exclude-labels` and the default content filter (Step 1 above, unless `--include-content`) to every section. Sort each section by `--sort-by`/`--sort-order`/`--nulls` (default: priority ascending — i.e. urgent first — nulls last).
+Apply `--include-labels`/`--exclude-labels` and the default content filter (Step 1 above, unless `--include-content`) to every section. Sort each section by `--sort-by`/`--sort-order`/`--nulls`:
+
+- **`--sort-by=priority`** (the default): rank by urgency, not alphabetically or by the raw string value. Map `urgent`→0, `high`→1, `medium`→2, `low`→3, `none`/unset→4, then sort by that rank. `asc` (the default) means urgent-first; `desc` means none/low-first.
+- **`--sort-by=target_date|created_at|updated_at`**: sort by that field's actual value, `asc`/`desc` as given, with `--nulls` (default `last`) controlling where missing values land.
 
 ## Step 3 — Display
 

@@ -32,11 +32,8 @@ Reusable skills for planning, research, code review, and PRD writing. No externa
 | Skill | Description |
 |---|---|
 | `roast` | Critically review a plan, code, or diff — blunt, prioritized by severity |
-| `plan-only` | Produce a concrete implementation plan without making any changes |
 | `research` | Research a topic across in-repo docs, official docs, and communities |
-| `audit-rules` | Audit CLAUDE.md files and skills across repos for redundancy and conflicts |
 | `meta-improvement` | Update a rule or skill based on a mistake or better approach found during work |
-| `summarize-active-rules` | Summarize which rules and skills are active in the current context |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
 | `create-prd` | Create a PRD for a project or feature |
 

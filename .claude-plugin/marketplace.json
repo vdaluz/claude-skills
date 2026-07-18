@@ -10,7 +10,7 @@
       "name": "cmux-tools",
       "source": "./plugins/cmux-tools",
       "description": "Skills for cmux terminal multiplexer users — read terminal panes, browser tabs, and surfaces from Claude",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "developer-tools",
       "keywords": ["cmux", "terminal", "read-surface", "screen-reading"]
     },

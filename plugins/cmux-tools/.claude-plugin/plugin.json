@@ -1,7 +1,7 @@
 {
   "name": "cmux-tools",
   "description": "Adds read-surface skill: read terminal panes, browser tabs, and surfaces from Claude without running duplicate commands",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Victor Da Luz",
     "url": "https://github.com/vdaluz"

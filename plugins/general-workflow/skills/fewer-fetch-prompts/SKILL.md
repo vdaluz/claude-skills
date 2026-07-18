@@ -1,6 +1,7 @@
 ---
 name: fewer-fetch-prompts
-description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts. Run when WebFetch approvals are becoming friction.
+description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts. Trigger phrases- "reduce WebFetch prompts", "fewer fetch prompts", "WebFetch keeps asking", "add domains to the allowlist", "tune WebFetch permissions". Run when WebFetch approvals are becoming friction.
+allowed-tools: Bash(python3 *)
 ---
 
 Scan Claude Code session transcripts for frequently fetched domains, filter to safe public ones, and add them to `~/.claude/settings.json` so WebFetch no longer prompts for approved domains.
@@ -17,66 +18,13 @@ Trigger: `/fewer-fetch-prompts`
 
 ### 1. Scan transcripts for WebFetch domains
 
-Run this scan. It parses actual WebFetch tool_use calls from JSONL transcripts — not just any URL mentioned in text — so it reflects domains Claude actually fetched:
-
-```python
-import json, glob, os
-from urllib.parse import urlparse
-from collections import Counter
-
-home = os.path.expanduser('~')
-domains = Counter()
-for f in glob.glob(f'{home}/.claude/projects/**/*.jsonl', recursive=True):
-    try:
-        with open(f) as fp:
-            for line in fp:
-                try:
-                    entry = json.loads(line)
-                    content = entry.get('message', {}).get('content', [])
-                    if isinstance(content, list):
-                        for block in content:
-                            if isinstance(block, dict) and block.get('type') == 'tool_use' and block.get('name') == 'WebFetch':
-                                url = block.get('input', {}).get('url', '')
-                                if url:
-                                    parsed = urlparse(url)
-                                    domain = parsed.netloc.lower().split(':')[0]
-                                    if domain:
-                                        domains[domain] += 1
-                except:
-                    pass
-    except:
-        pass
-
-for domain, count in domains.most_common(50):
-    print(f'{count:4d}  {domain}')
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/scan_domains.py
 ```
 
-If the above returns few results, fall back to the broader URL scan:
+Parses actual WebFetch tool_use calls from JSONL transcripts — not just any URL mentioned in text — so it reflects domains Claude actually fetched. If that yields few results, the script automatically falls back to a broader raw-URL scan and reports which mode it used.
 
-```python
-import json, glob, re, os
-from collections import Counter
-
-home = os.path.expanduser('~')
-domains = Counter()
-for f in glob.glob(f'{home}/.claude/projects/**/*.jsonl', recursive=True):
-    try:
-        with open(f) as fp:
-            for line in fp:
-                try:
-                    msg = json.loads(line)
-                    for url in re.findall(r'https?://([^/"\s\'\\]+)', json.dumps(msg)):
-                        domain = url.split('/')[0].lower().split(':')[0]
-                        if '.' in domain:
-                            domains[domain] += 1
-                except:
-                    pass
-    except:
-        pass
-
-for domain, count in domains.most_common(50):
-    print(f'{count:4d}  {domain}')
-```
+**Note:** this depends on the transcript JSONL schema, which is Claude Code version-specific and may drift across releases. If the scan comes back empty on a version where it previously worked, that's the first thing to check, not "no domains fetched."
 
 ### 2. Filter: exclude these categories automatically
 
@@ -102,15 +50,8 @@ Remove from candidates without asking:
 
 ### 3. Read existing allowlist
 
-```python
-import json, os
-
-settings_path = os.path.join(os.path.expanduser('~'), '.claude', 'settings.json')
-with open(settings_path) as f:
-    s = json.load(f)
-existing = [p for p in s.get('permissions', {}).get('allow', []) if p.startswith('WebFetch')]
-print('Already allowed:')
-for e in existing: print(' ', e)
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py list
 ```
 
 Remove any candidates already in the allowlist.
@@ -134,54 +75,22 @@ Ask: "Add all Tier 1 and Tier 2? Which Tier 3 domains do you want to include?"
 
 Once user confirms the list:
 
-```python
-import json, os
-
-approved_domains = [
-    # Fill from user-confirmed list
-]
-
-settings_path = os.path.join(os.path.expanduser('~'), '.claude', 'settings.json')
-with open(settings_path) as f:
-    settings = json.load(f)
-
-allow = settings.setdefault('permissions', {}).setdefault('allow', [])
-
-added = []
-for domain in approved_domains:
-    entry = f'WebFetch(domain:{domain})'
-    if entry not in allow:
-        allow.append(entry)
-        added.append(entry)
-
-with open(settings_path, 'w') as f:
-    json.dump(settings, f, indent=4)
-
-print(f'Added {len(added)} entries:')
-for a in added:
-    print(' ', a)
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py add <domain1> <domain2> ...
 ```
+
+This backs up `settings.json` (timestamped, alongside the original) before rewriting it, adds the approved domains, writes the file, then re-reads and prints the full allowlist to confirm — steps 5 and 6 in one call.
 
 ### 6. Verify
 
-```python
-import json, os
-
-settings_path = os.path.join(os.path.expanduser('~'), '.claude', 'settings.json')
-with open(settings_path) as f:
-    s = json.load(f)
-fetch = [p for p in s.get('permissions', {}).get('allow', []) if p.startswith('WebFetch')]
-print(f'{len(fetch)} WebFetch domains in allowlist:')
-for f in sorted(fetch): print(' ', f)
-```
-
-Confirm the entries are present and no internal/private domains slipped in.
+The `add` command's own output already includes verification (re-reads the file after writing). Confirm the entries are present and no internal/private domains slipped in.
 
 ---
 
 ## Notes
 
-- **Wildcards don't work**: `WebFetch(domain:*)` is a known Claude Code bug — still prompts per domain. Must be explicit per domain.
+- **Wildcards don't work**: `WebFetch(domain:*)` is a confirmed, still-open Claude Code bug — [anthropics/claude-code#9329](https://github.com/anthropics/claude-code/issues/9329) (last updated 2026-03-29, checked 2026-07-18) — still prompts per domain. Must be explicit per domain.
 - **Subdomains are not inherited**: `WebFetch(domain:grafana.com)` does NOT cover `grafana.yourdomain.net`. Internal subdomains should be filtered in step 2.
 - **Global only**: This skill writes to `~/.claude/settings.json`, covering all projects. There is no project-local mode.
 - **Re-run anytime**: Run `/fewer-fetch-prompts` after adding new projects to pick up newly accumulated domains.
+- **`json.dump(indent=4)` renormalizes formatting**: the rewrite in `manage_allowlist.py` reformats the whole file to 4-space indent, which can shift unrelated whitespace/ordering even though it doesn't change values. The pre-write backup exists specifically so this is recoverable, not just theoretically safe.

@@ -1,10 +1,13 @@
 {
   "name": "general-workflow",
   "description": "Reusable skills for planning, research, code review, and PRD writing — no external tools required",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Victor Da Luz",
     "url": "https://github.com/vdaluz"
   },
-  "homepage": "https://github.com/vdaluz/claude-skills"
+  "homepage": "https://github.com/vdaluz/claude-skills",
+  "repository": "https://github.com/vdaluz/claude-skills",
+  "license": "MIT",
+  "keywords": ["planning", "research", "review", "prd", "workflow"]
 }

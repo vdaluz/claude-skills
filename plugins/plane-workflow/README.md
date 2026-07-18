@@ -1,26 +1,24 @@
 # plane-workflow
 
-Claude Code skills for [Plane](https://plane.so) project management — start issues, wrap them up, convert PRDs and spikes into issues, and resume work across sessions.
+Claude Code skills for [Plane](https://plane.so) project management — start issues, convert PRDs and spikes into issues, and resume work across sessions.
 
 ## Prerequisite: Plane MCP server
 
-These skills use the Plane MCP server. Install and configure it before use:
+These skills use the [official Plane MCP server](https://github.com/makeplane/plane-mcp-server). Install and configure it before use ([`uv`](https://docs.astral.sh/uv/) required):
 
 ```bash
 # Install the Plane MCP server
-claude mcp add plane -- npx -y mcp-server-plane
-
-# Or with explicit workspace slug
-claude mcp add plane -- npx -y mcp-server-plane --workspace-slug your-workspace-slug
+claude mcp add plane -- uvx plane-mcp-server stdio
 ```
 
-You'll need a Plane API key. Get it from **Plane → Settings → API tokens**. Set it as an environment variable:
+You'll need a Plane API key and your workspace slug. Get the key from **Plane → Settings → API tokens**. Set them as environment variables:
 
 ```bash
-export PLANE_API_TOKEN=your_api_token
+export PLANE_API_KEY=your_api_key
+export PLANE_WORKSPACE_SLUG=your-workspace-slug
 ```
 
-Or configure it in `~/.claude/settings.json` under `env`.
+Or configure them in `~/.claude/settings.json` under `env`. For a self-hosted Plane instance, also set `PLANE_BASE_URL` (defaults to `https://api.plane.so`). Full reference: [developers.plane.so/dev-tools/mcp-server](https://developers.plane.so/dev-tools/mcp-server).
 
 ## Install
 

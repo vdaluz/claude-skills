@@ -1,6 +1,7 @@
 ---
 name: whats-next
 description: Show what's next for a Plane project across In Progress, Rolling, Todo, Backlog, and Blocked sections. Use when the user asks what's next, what to work on, or runs /whats-next.
+effort: low
 ---
 
 Show what's next for a Plane project: In Progress → Rolling (due) → Todo → Backlog → Blocked.
@@ -32,7 +33,7 @@ Get the project ID and state UUIDs (In Progress, Rolling if your project uses on
 
 ## Step 2 — Fetch and partition issues
 
-**Known tool bug:** do not pass `state_groups`, `priorities`, `label_ids`, or any filter param to `mcp__plane__list_work_items` — that routes through Plane's advanced-search endpoint, which can 403 depending on the API key's permissions. Call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,updated_at"` — filter and sort yourself over the full result. If the trimmed result still exceeds the tool's output limit, it's auto-saved to a file — use `jq` rather than re-requesting with filters.
+See `_shared/plane-mcp-gotchas.md` ("Structured filters can 403") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,updated_at"`.
 
 Partition by state name/group:
 - **In Progress** (group `started`)

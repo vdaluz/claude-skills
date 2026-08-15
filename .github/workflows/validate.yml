@@ -20,3 +20,18 @@ jobs:
           for plugin in plugins/*/; do
             claude plugin validate "$plugin"
           done
+      - name: Verify CLAUDE_PLUGIN_ROOT script references exist
+        run: |
+          set -euo pipefail
+          missing=0
+          for plugin_dir in plugins/*/; do
+            plugin_dir="${plugin_dir%/}"
+            while IFS= read -r ref; do
+              rel="${ref#\$\{CLAUDE_PLUGIN_ROOT\}/}"
+              if [ ! -f "$plugin_dir/$rel" ]; then
+                echo "::error::$plugin_dir references missing script: $rel"
+                missing=1
+              fi
+            done < <(grep -rhoE '\$\{CLAUDE_PLUGIN_ROOT\}/[A-Za-z0-9_./-]+' "$plugin_dir" --include="SKILL.md" | sort -u)
+          done
+          exit $missing

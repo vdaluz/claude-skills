@@ -1,6 +1,7 @@
 ---
 name: roast
 description: Critically review a plan, code, or diff and surface real issues bluntly, ranked by severity. Use when the user asks to "roast", "critique", or "review" a plan/diff/code for correctness, rule violations, scope creep, or security issues before it ships.
+effort: xhigh
 ---
 
 Critically review a plan, code, or diff and surface real issues.

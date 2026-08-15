@@ -1,6 +1,6 @@
 ---
 name: browser-verify
-description: Interactively drive a real browser (via the Playwright MCP server, configured to use your actual installed browser) to verify a UI/frontend change works, per the "use the feature in a browser before reporting complete" rule. Use for any repo that ships a web UI reachable via a local dev server, after making a UI or frontend change, before marking that work done. Not framework-specific — the mechanism is generic (navigate to a dev-server URL, drive it, screenshot it).
+description: Interactively drive a real browser (via the Playwright MCP server, using your actual installed browser) to verify a UI/frontend change works. Use for any repo with a web UI on a local dev server, after a UI/frontend change, before marking it done. Not framework-specific.
 ---
 
 Verify a UI/frontend change by actually driving it in a browser, not just building/linting it.

@@ -40,7 +40,7 @@ Steps:
 
    Then produce a short research-backed implementation plan (tasks only, no "research X" steps), risks/unknowns. For learning-oriented projects, include a brief "why" for each step. If the issue is a service deployment and your project has a deployment checklist skill or doc, use it as a mandatory checklist. For complex or infrastructure-changing plans, suggest running a review/roast pass before proceeding.
 
-   **If the issue touches UI** (pages under `src/pages/`, components, layouts, styles, or markdown that ships HTML): include an a11y verification item in the done-criteria — run `npm run a11y` locally (or check with the browser axe DevTools extension on changed pages) and record the result in the Plane wrap-up comment.
+   **If the issue touches UI** (pages under `src/pages/`, components, layouts, styles, or markdown that ships HTML): include a UI verification item in the done-criteria per the `wrap-up-issue` skill's "UI verification scope" rule (`browser-verify` to exercise the change, plus the correctly-scoped a11y check — scoped vs full depends on whether shared surface was touched) and record the result in the Plane wrap-up comment.
 
    Wait for user "go" before touching files or running commands.
 

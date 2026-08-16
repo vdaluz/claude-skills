@@ -14,7 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install -g @anthropic-ai/claude-code
+      # Pinned (META-91): nothing auto-bumps this - Dependabot's npm ecosystem
+      # doesn't watch ad-hoc -g installs in workflow steps. Frozen for CI
+      # reproducibility, not tracking latest; needs a periodic manual bump.
+      - run: npm install -g @anthropic-ai/claude-code@2.1.233
       - run: claude plugin validate .
       - run: |
           for plugin in plugins/*/; do

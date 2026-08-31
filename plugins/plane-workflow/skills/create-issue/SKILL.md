@@ -11,8 +11,8 @@ Arguments: project identifier (e.g. LAB, WQ1K), title, description, labels (opti
 ## Steps
 
 1. If any required input is missing, ask for it. Priority is never a blocking ask - infer it per step 4 instead.
-2. Call `mcp__plane__list_projects` to get the project UUID for the given identifier.
-3. Call `mcp__plane__list_states` for the project and find the Backlog state UUID — new issues always go to Backlog, never Todo.
+2. Get the project UUID for the given identifier — from a cached reference file if you keep one, or via `mcp__plane__list_projects` otherwise.
+3. Get the Backlog state UUID for the project — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise. New issues always go to Backlog, never Todo.
 4. **Priority is mandatory - never leave it unset.** If the caller stated one, use it. Otherwise infer from the title/description:
    - `urgent`: active outage, data loss risk, security exposure, broken production service
    - `high`: blocks other work, a hard deadline, or a confirmed bug affecting real usage
@@ -35,3 +35,4 @@ Arguments: project identifier (e.g. LAB, WQ1K), title, description, labels (opti
 
 - Label requirements are workspace-specific. Configure your own project label rules in your project's CLAUDE.md or equivalent.
 - `description_html` must use actual HTML tags — Plane silently discards plain text passed to this field.
+- **Batch callers** (e.g. `prd-to-issues`, `spike-to-issues` creating several issues in one run): resolve the project UUID and Backlog state UUID **once** yourselves, then call `mcp__plane__create_work_item` directly per issue - applying step 4's priority-inference rules per issue - instead of re-invoking this skill's steps 2-3 on every call, which re-resolves the same UUIDs each time.

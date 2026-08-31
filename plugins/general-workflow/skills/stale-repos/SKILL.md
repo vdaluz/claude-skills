@@ -1,6 +1,7 @@
 ---
 name: stale-repos
 description: Scan the git repos in a root directory's immediate subdirectories for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup. Use when the user asks to find or clean up stale branches or worktrees.
+effort: low
 ---
 
 Scan the git repos in a root directory's immediate subdirectories (default `~/Repos`) for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup. Nested repos (a repo inside a repo) are not walked into — only direct children of the root.

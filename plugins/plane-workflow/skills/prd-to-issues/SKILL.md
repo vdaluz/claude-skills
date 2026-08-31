@@ -24,7 +24,7 @@ Do NOT create one issue per functional requirement — that's too granular. Inst
 3. Call `mcp__plane__list_states` for the project. If no states exist, create the default set before creating any issues: Backlog (group: backlog, default: true, color: #A3A3A3), Todo (unstarted, #3A86FF), In Progress (started, #F59E0B), Done (completed, #22C55E), Cancelled (cancelled, #EF4444). All issues must be created with a state — use Backlog as the default.
 4. Check if a "spike" label exists in the project via `mcp__plane__list_labels`. If not, create one with `mcp__plane__create_label` (color: `#F59E0B`).
 5. Plan the full issue list before creating anything. Output it to the user as a numbered list (title + one-line scope summary) and wait for confirmation or edits.
-6. After confirmation, create each issue using the **create-issue** skill. For spikes, apply the spike label. For feature-area issues, include the relevant FR numbers in the description.
+6. After confirmation, create each issue by calling `mcp__plane__create_work_item` directly with the project UUID and Backlog state UUID already resolved in steps 2-3 - apply **create-issue**'s step 4 priority-inference rules per issue rather than re-invoking that skill, which would re-resolve the same UUIDs on every call. For spikes, apply the spike label from step 4. For feature-area issues, include the relevant FR numbers in the description.
 7. Create issues in this order: setup first, spikes second (they're often blockers), feature areas last.
 8. After all issues are created, output a summary table: issue ID, title, and any blocker relationships noted in the PRD.
 

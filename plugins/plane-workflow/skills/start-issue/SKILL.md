@@ -34,7 +34,7 @@ Steps:
 
    ### Non-spike path
    BEFORE writing the plan, do actual research:
-   - Fetch every reference link in the issue description (WebFetch)
+   - Fetch every reference link in the issue description (WebFetch - issue independent links as parallel calls in the same turn, not one at a time)
    - Run WebSearch if the issue mentions research, evaluation, or alternatives
    - Cite sources in the plan (e.g. "per official docs at X…")
 

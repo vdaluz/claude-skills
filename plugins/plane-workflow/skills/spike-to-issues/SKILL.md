@@ -23,7 +23,7 @@ Run this after closing out a spike, or any time a spike has documented findings 
    - If the spike produced a decision (e.g. "use fine-grained PAT, not GitHub App") → update the description of the relevant existing implementation issue with that decision. Do not create a new issue just to record a decision.
 5. **STOP. Present the full proposed issue list before creating anything.** Format as a numbered list with title, priority, and one-line summary for each new issue; separately list any existing issues that will be updated. Do not proceed until the user explicitly approves (e.g. "go", "create them", "looks good"). If the user asks to modify or drop an issue, update the list and re-present before creating.
 6. After confirmation:
-   - Use the **create-issue** skill for any new issues.
+   - For any new issues: get the Backlog state UUID for this project (from a cached reference file if you keep one, or via `mcp__plane__list_states` - the project UUID is already known from step 1's retrieve). Then call `mcp__plane__create_work_item` directly per issue, applying **create-issue**'s step 4 priority-inference rules rather than invoking that skill per issue.
    - For existing issues that need description updates, use `mcp__plane__update_work_item`.
    - Remove the "blocked by spike" note from any issues that are now unblocked.
 7. Post a comment on the spike issue linking to the newly created/updated issues (e.g. "Findings converted to BLG-12, BLG-13. BLG-8 unblocked and updated.").

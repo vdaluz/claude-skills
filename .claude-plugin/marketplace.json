@@ -26,7 +26,7 @@
       "name": "plane-workflow",
       "source": "./plugins/plane-workflow",
       "description": "Skills for Plane project management - create, start, and continue issues; see and pick what's next; reprioritize the backlog; convert PRDs and spikes into issues",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "category": "project-management",
       "keywords": ["plane", "issues", "project-management", "prd", "workflow"]
     }

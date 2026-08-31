@@ -17,7 +17,7 @@ If your project uses a label or title convention to separate content backlog (bl
 
 ## Step 2 — Fetch issues in scope
 
-**Do not pass `state_groups`, `priorities`, `label_ids`, or any other filter param to `mcp__plane__list_work_items`** — any of those can route the call through Plane's advanced-search endpoint, which can 403 depending on the API key's permissions. Call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,sort_order"` — `fields`/`expand` alone stay on the working standard-list endpoint and also keep the payload small. Filter to the Backlog state UUID (and Todo's, if `--include-todo`) yourself over the full result. If the project is large enough that even the trimmed-fields result exceeds the tool's output limit, the result is auto-saved to a file — use `jq` on it (`select(.state == "<backlog-uuid>")`) rather than re-requesting with filters.
+See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("`pql`/structured filters can be entirely unsupported") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,sort_order"` - `fields`/`expand` alone keep the payload small and avoid the unsupported-filter failure. Filter to the Backlog state UUID (and Todo's, if `--include-todo`) yourself over the full result. If the project is large enough that even the trimmed-fields result exceeds the tool's output limit, the result is auto-saved to a file — use `jq` on it (`select(.state == "<backlog-uuid>")`) rather than re-requesting with filters.
 
 Apply the content-filter labels from Step 1 and `--limit` (by current `sort_order` ascending) after filtering to scope.
 
@@ -27,11 +27,9 @@ If the scoped list is empty, say so and stop.
 
 ## Step 3 — Fetch dependency edges
 
-For every issue in scope, call `mcp__plane__list_work_item_relations(project_id, work_item_id)` and keep the `blocked_by` and `blocking` lists.
-
-See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can throw on a populated relation") for why this call can fail and how to interpret it:
-- On success (no error): use the returned `blocked_by`/`blocking` lists normally.
-- On the known validation error: treat the issue as having no *known* edges for graph purposes (don't let it be promoted by an unverifiable "blocks N" count, and don't demote it either), and flag it explicitly in the Step 6 output: `"<ID>: has a relation the API client can't parse (known tool bug) - position not dependency-aware, verify manually."`
+Probe `mcp__plane__list_work_item_relations(project_id, work_item_id)` once on the first issue in scope before looping it over every issue - see `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can fail entirely, two different ways") for why this call can fail and how to interpret it:
+- If the probe 404s: relations are unavailable for this entire run. Skip the call for every remaining issue, note this plainly in the Step 6 output, and fall through to the Step 4 urgency tie-break for all of them - don't call it per issue and let it fail N times on a large backlog.
+- Otherwise, call it for every issue in scope and keep the returned `blocked_by`/`blocking` lists. On the known pydantic validation error for an individual issue: treat that one issue as having no *known* edges for graph purposes (don't let it be promoted by an unverifiable "blocks N" count, and don't demote it either), and flag it explicitly in the Step 6 output: `"<ID>: has a relation the API client can't parse (known tool bug) - position not dependency-aware, verify manually."`
 
 For every distinct related item that *is* resolved, get its current state group from the relation response, or via `mcp__plane__retrieve_work_item` if not included. An issue only counts as a **live blocker** if its state group is not `completed` or `cancelled` — a blocker that's Done or Cancelled no longer constrains order.
 

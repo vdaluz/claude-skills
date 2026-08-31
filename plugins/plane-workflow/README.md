@@ -43,15 +43,16 @@ After install, skills are available namespaced: `/plane-workflow:start-issue`, `
 
 ## Optional integrations
 
-- **cmux**: `start-issue` optionally uses the [cmux](https://github.com/vdaluz/cmux) terminal multiplexer to inject the session rename command. Not required — the rename command is always printed to chat.
 - **`pbcopy`** (macOS): the session rename step optionally copies the rename command to clipboard. Falls back gracefully on non-macOS systems.
+- **A browser-verification skill** (e.g. general-workflow's `browser-verify`): if you have one installed, `start-issue` points to it for exercising UI changes before marking them done. Not required - the UI-verification step works without it, just less thoroughly.
 
 ## Manual install (without the marketplace)
 
-Copy any skill directory into `~/.claude/skills/`:
+Copy the skill directory *and* `skills/_shared` into `~/.claude/skills/` - most skills here reference files in `_shared/`, and the `${CLAUDE_PLUGIN_ROOT}` prefix those references use only resolves inside a marketplace install. In a manual copy, `_shared/` needs to land at `~/.claude/skills/_shared/` instead:
 
 ```bash
 cp -r plugins/plane-workflow/skills/start-issue ~/.claude/skills/
+cp -r plugins/plane-workflow/skills/_shared ~/.claude/skills/
 ```
 
 Then invoke as `/start-issue` (no namespace prefix).

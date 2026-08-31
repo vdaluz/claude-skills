@@ -29,7 +29,7 @@ If the scoped list is empty, say so and stop.
 
 For every issue in scope, call `mcp__plane__list_work_item_relations(project_id, work_item_id)` and keep the `blocked_by` and `blocking` lists.
 
-See `_shared/plane-mcp-gotchas.md` ("Relations calls can throw on a populated relation") for why this call can fail and how to interpret it:
+See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can throw on a populated relation") for why this call can fail and how to interpret it:
 - On success (no error): use the returned `blocked_by`/`blocking` lists normally.
 - On the known validation error: treat the issue as having no *known* edges for graph purposes (don't let it be promoted by an unverifiable "blocks N" count, and don't demote it either), and flag it explicitly in the Step 6 output: `"<ID>: has a relation the API client can't parse (known tool bug) - position not dependency-aware, verify manually."`
 

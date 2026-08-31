@@ -16,7 +16,7 @@ Get the project ID and state UUIDs (Backlog, Todo, In Progress, Blocked, Done, C
 
 ## Step 2 — Fetch issues in scope
 
-See `_shared/plane-mcp-gotchas.md` ("Structured filters can 403") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,description_html"`.
+See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Structured filters can 403") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,description_html"`.
 
 Partition by state name/group:
 - **In Progress** (group `started`) — already being worked; note it exists but it's not a candidate for "what's next."
@@ -30,7 +30,7 @@ If your project uses a label or title convention to separate content backlog (bl
 1. **Cheap objective triage first**, to cut a possibly-large pool down to a shortlist before reading anything in full:
    - Priority weight: `urgent`=4, `high`=3, `medium`=2, `low`=1, `none`=0.
    - Overdue/due-soon bump: any candidate with `target_date` on or before today (or within a few days) gets an urgency bump — this covers recurring/rolling-style issues even where the project doesn't use that exact label.
-   - Best-effort blocking leverage: for the top ~15 by the above, call `mcp__plane__list_work_item_relations(project_id, work_item_id)` and note how many other in-scope issues each one blocks. See `_shared/plane-mcp-gotchas.md` ("Relations calls can throw on a populated relation") for how to handle this call's known failure mode.
+   - Best-effort blocking leverage: for the top ~15 by the above, call `mcp__plane__list_work_item_relations(project_id, work_item_id)` and note how many other in-scope issues each one blocks. See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can throw on a populated relation") for how to handle this call's known failure mode.
    - Take the top 6-10 by this cheap score as the shortlist.
 2. **Read the shortlist for real** — full `description_html`, AND `mcp__plane__list_work_item_comments` for every single shortlisted candidate, no exceptions. Skipping the comments call is a common way to produce a wrong rationale: a description can cite something (a bug, a blocker) that a later comment already resolved or marked out of scope. A description can be stale in a way only the comments reveal — do not treat "read the shortlist" as description-only. If you catch yourself about to present options without having called this for every one of the 3, stop and do it first. Also skim any project notes/memory you keep for this project — they often carry live context (an active initiative, a current deadline, a "this is the flagship feature" note) that changes what "makes sense next" means beyond raw priority. This step is what makes the recommendation actually good instead of a mechanical sort — use judgment, the same kind a competent engineer would use picking their own next task:
    - Concrete and well-scoped beats vague and open-ended ("fix this specific null check" beats "improve the UX, make sure it's good").

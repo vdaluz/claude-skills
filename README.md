@@ -65,7 +65,7 @@ Copy any skill directory into `~/.claude/skills/`:
 cp -r plugins/cmux-tools/skills/read-surface ~/.claude/skills/
 ```
 
-Then invoke as `/read-surface` (no namespace prefix).
+Then invoke as `/read-surface` (no namespace prefix). Some skills have extra manual-install requirements - plane-workflow's skills need `skills/_shared` copied alongside them, and two general-workflow skills are marketplace-only. See each plugin's own README for the details.
 
 ## Contributing
 

@@ -37,4 +37,4 @@ Copy any skill directory into `~/.claude/skills/`:
 cp -r plugins/general-workflow/skills/roast ~/.claude/skills/
 ```
 
-Then invoke as `/roast` (no namespace prefix).
+Then invoke as `/roast` (no namespace prefix). Exception: `fewer-fetch-prompts` and `stale-repos` bundle their own scripts and invoke them via the `${CLAUDE_PLUGIN_ROOT}` prefix, which only resolves inside a marketplace install - a manual copy of either breaks the script calls, so treat those two as marketplace-only.

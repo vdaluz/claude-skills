@@ -15,6 +15,11 @@ Refinements baked in:
      [gone] is also the only reliable proxy for squash-merged branches.
   2. Worktree branch is always read from `worktree list --porcelain`, never the directory name
      (directory names drift from the branch they hold).
+  3. The remote name is never assumed to be "origin" — it's resolved per repo (remote HEAD
+     symref, or the default branch's own configured upstream remote), so a renamed remote
+     doesn't silently blank out ahead/behind counts. When no remote can be resolved at all,
+     ahead/behind stay `None` (unknown) rather than being coerced to 0 — an unknown count can
+     never produce a `prune-*` verdict, only a `review-*` one.
 
 Usage:
   scan.py [--root ~/Repos] [--age-days 60] [--fetch] [--text] [PATH ...]
@@ -30,6 +35,13 @@ def sh(args):
         return ""
 
 
+def ok(args):
+    try:
+        return subprocess.run(args, capture_output=True, text=True).returncode == 0
+    except Exception:
+        return False
+
+
 def is_repo(path):
     return os.path.isdir(os.path.join(path, ".git")) or os.path.isfile(os.path.join(path, ".git"))
 
@@ -38,6 +50,8 @@ def discover(root, explicit):
     if explicit:
         return [os.path.abspath(os.path.expanduser(p)) for p in explicit if is_repo(os.path.expanduser(p))]
     root = os.path.expanduser(root)
+    if not os.path.isdir(root):
+        sys.exit(f"error: root path {root!r} does not exist (pass --root to point at your repos)")
     out = []
     for name in sorted(os.listdir(root)):
         p = os.path.join(root, name)
@@ -46,15 +60,44 @@ def discover(root, explicit):
     return out
 
 
-def default_branch(repo):
-    ref = sh(["git", "-C", repo, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"])
-    if ref:
-        return ref.split("/")[-1]
+def local_default_branch(repo):
     for b in ("main", "master"):
-        if sh(["git", "-C", repo, "show-ref", "--verify", "--quiet", f"refs/heads/{b}"]) == "" and \
-           subprocess.run(["git", "-C", repo, "show-ref", "--verify", "--quiet", f"refs/heads/{b}"]).returncode == 0:
+        if ok(["git", "-C", repo, "show-ref", "--verify", "--quiet", f"refs/heads/{b}"]):
             return b
     return None
+
+
+def resolve_remote_and_default(repo):
+    """Never assume the remote is named "origin" — a rename (origin -> upstream) must still
+    resolve correctly, since ahead/behind against the wrong (or a nonexistent) remote is what
+    silently turns "has unmerged commits" into "safe to prune"."""
+    for ref in sh(["git", "-C", repo, "for-each-ref", "--format=%(refname)",
+                   "refs/remotes/*/HEAD"]).splitlines():
+        target = sh(["git", "-C", repo, "symbolic-ref", "--quiet", ref])
+        prefix = ref[:-len("HEAD")]  # "refs/remotes/<remote>/"
+        if target and target.startswith(prefix):
+            remote = prefix[len("refs/remotes/"):].rstrip("/")
+            return remote, target[len(prefix):]
+    # no remote HEAD symref recorded (e.g. remote added without `git remote set-head`) — fall
+    # back to a local main/master and whatever remote it's tracking, if any.
+    defb = local_default_branch(repo)
+    if defb:
+        remote = sh(["git", "-C", repo, "for-each-ref", "--format=%(upstream:remotename)",
+                    f"refs/heads/{defb}"]) or None
+        return remote, defb
+    return None, None
+
+
+def base_ref_for(repo, remote, defb):
+    """The ref to diff branches against: remote/defb when that ref actually exists locally,
+    else the local defb branch itself, else None (genuinely unknown — never silently 0)."""
+    if not defb:
+        return None
+    if remote:
+        candidate = f"{remote}/{defb}"
+        if ok(["git", "-C", repo, "rev-parse", "--verify", "--quiet", candidate]):
+            return candidate
+    return f"refs/heads/{defb}"
 
 
 def count(repo, rng):
@@ -70,7 +113,8 @@ def scan_repo(repo, age_days, do_fetch):
     if do_fetch:
         subprocess.run(["git", "-C", repo, "fetch", "--all", "--prune", "--quiet"],
                        capture_output=True, text=True)
-    defb = default_branch(repo)
+    remote, defb = resolve_remote_and_default(repo)
+    base_ref = base_ref_for(repo, remote, defb)
     cur = sh(["git", "-C", repo, "branch", "--show-current"])
     now = time.time()
 
@@ -112,8 +156,8 @@ def scan_repo(repo, age_days, do_fetch):
                  "--format=%(refname:short)", "refs/heads"]).splitlines():
         ts = sh(["git", "-C", repo, "log", "-1", "--format=%ct", b])
         age = int((now - int(ts)) / 86400) if ts.isdigit() else None
-        ahead = count(repo, f"origin/{defb}..{b}") if defb else None
-        behind = count(repo, f"{b}..origin/{defb}") if defb else None
+        ahead = count(repo, f"{base_ref}..{b}") if base_ref else None
+        behind = count(repo, f"{b}..{base_ref}") if base_ref else None
         gone = "[gone]" in track.get(b, "")
         is_merged = b in merged
         in_wt = b in checked_out
@@ -130,20 +174,22 @@ def scan_repo(repo, age_days, do_fetch):
         detached = "detached" in d
         bare = "bare" in d
         locked = "locked" in d
-        dirty = bool(sh(["git", "-C", path, "status", "--porcelain"])) if path and not bare else False
-        ahead = count(repo, f"origin/{defb}..{br}") if (br and defb) else None
-        behind = count(repo, f"{br}..origin/{defb}") if (br and defb) else None
+        missing = bool(path) and not bare and not os.path.isdir(path)
+        prunable = missing or ("prunable" in d)
+        dirty = bool(sh(["git", "-C", path, "status", "--porcelain"])) if (path and not bare and not missing) else False
+        ahead = count(repo, f"{base_ref}..{br}") if (br and base_ref) else None
+        behind = count(repo, f"{br}..{base_ref}") if (br and base_ref) else None
         gone = "[gone]" in track.get(br, "")
         is_merged = br in merged
         primary = (i == 0)
         v = worktree_verdict(br, defb, primary, detached, bare, locked, dirty,
-                             gone, is_merged, ahead, behind)
+                             gone, is_merged, ahead, behind, prunable)
         worktrees.append(dict(path=path, name=os.path.basename(path), branch=br or None,
                               primary=primary, detached=detached, bare=bare, locked=locked,
-                              dirty=dirty, ahead=ahead, behind=behind, merged=is_merged,
-                              gone=gone, verdict=v))
+                              dirty=dirty, prunable=prunable, ahead=ahead, behind=behind,
+                              merged=is_merged, gone=gone, verdict=v))
 
-    return dict(name=name, path=repo, default=defb, current=cur,
+    return dict(name=name, path=repo, default=defb, remote=remote, current=cur,
                 branches=branches, worktrees=worktrees)
 
 
@@ -155,12 +201,14 @@ def branch_verdict(b, defb, cur, gone, merged, ahead, behind, age, age_days, in_
     if in_wt:
         # checked out elsewhere: judge by the worktree; deleting the branch needs the worktree gone first
         return "in-worktree"
+    if gone and ahead is None:
+        return "review-gone-unknown"     # upstream deleted, can't confirm no local commits — never auto-prune
     if (ahead or 0) > 0 and gone:
-        return "review-gone-ahead"      # remote deleted but local commits exist
+        return "review-gone-ahead"       # remote deleted but local commits exist
     if (ahead or 0) > 0 and not merged:
         return "active"                  # unmerged local work — protect
     if gone:
-        return "prune-gone"              # upstream deleted (squash-merge proxy), no extra local work
+        return "prune-gone"              # upstream deleted (squash-merge proxy), confirmed no local-only work
     if merged and (ahead or 0) == 0:
         return "prune-merged"
     if (behind or 0) > 0 and (ahead or 0) == 0:
@@ -170,17 +218,21 @@ def branch_verdict(b, defb, cur, gone, merged, ahead, behind, age, age_days, in_
     return "keep"
 
 
-def worktree_verdict(br, defb, primary, detached, bare, locked, dirty, gone, merged, ahead, behind):
+def worktree_verdict(br, defb, primary, detached, bare, locked, dirty, gone, merged, ahead, behind, prunable):
     if bare:
         return "bare"
     if primary or (defb and br == defb):
         return "protected-primary"
+    if prunable:
+        return "prunable"                # administrative entry, working directory is gone
     if dirty:
         return "blocked-dirty"
     if locked:
         return "blocked-locked"
     if detached:
         return "review-detached"
+    if gone and ahead is None:
+        return "review-gone-unknown"
     if (ahead or 0) > 0 and gone:
         return "review-gone-ahead"
     if (ahead or 0) > 0 and not merged:
@@ -201,16 +253,21 @@ def text_report(data):
     out = []
     for r in data["repos"]:
         wt_prune = [w for w in r["worktrees"] if w["verdict"] in PRUNE]
+        wt_prunable = [w for w in r["worktrees"] if w["verdict"] == "prunable"]
         br_prune = [b for b in r["branches"] if b["verdict"] in PRUNE]
         review = [x for x in r["worktrees"] + r["branches"]
                   if x["verdict"].startswith("review")]
-        if not (wt_prune or br_prune or review):
+        if not (wt_prune or wt_prunable or br_prune or review):
             continue
-        out.append(f"\n### {r['name']}  (default: {r['default']})")
+        out.append(f"\n### {r['name']}  (default: {r['default']}, remote: {r['remote']})")
         if wt_prune:
             out.append("  worktrees to prune:")
             for w in wt_prune:
                 out.append(f"    - {w['name']:<34} [{w['branch']}] behind={w['behind']} ahead={w['ahead']} → {w['verdict']}")
+        if wt_prunable:
+            out.append("  worktrees with a missing directory (admin cleanup only — `git worktree prune`):")
+            for w in wt_prunable:
+                out.append(f"    - {w['name']:<34} [{w['branch']}] path={w['path']}")
         if br_prune:
             out.append("  branches to prune:")
             for b in br_prune:

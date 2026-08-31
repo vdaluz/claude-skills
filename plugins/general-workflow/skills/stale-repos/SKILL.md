@@ -1,17 +1,17 @@
 ---
 name: stale-repos
-description: Scan every git repo under a root directory for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup. Use when the user asks to find or clean up stale branches or worktrees.
+description: Scan the git repos in a root directory's immediate subdirectories for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup. Use when the user asks to find or clean up stale branches or worktrees.
 ---
 
-Scan every git repo under a root directory (default `~/Repos`) for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup.
+Scan the git repos in a root directory's immediate subdirectories (default `~/Repos`) for stale branches and worktrees, report them grouped by verdict, and offer safe opt-in cleanup. Nested repos (a repo inside a repo) are not walked into — only direct children of the root.
 
-Arguments (optional): `--prune` (enable cleanup), `--fetch` (refresh remotes first), `--age-days N` (default 60), `--root PATH`, or specific repo paths.
+Arguments (optional): `--fetch` (refresh remotes first), `--age-days N` (default 60), `--root PATH`, or specific repo paths — all passed through to `scan.py`. `--prune` (enable cleanup) is a **skill-level** switch only: it decides whether you do Step 3 below, and is never passed to `scan.py` (which has no such flag).
 
 This skill is **workstation-local** — it reads the local filesystem, so it cannot run as a cloud/scheduled routine.
 
 ## Core principle
 
-A deterministic Python scanner (`scan.py`, bundled in this skill dir) does all detection and emits JSON. You (Claude) do grouping, judgment, and — only behind explicit confirmation — the destructive cleanup. The scanner never mutates anything; every delete is a separate prompted git command you run after the user approves.
+A deterministic Python scanner (`scan.py`, bundled in this skill dir) does all detection and emits JSON. You (Claude) do grouping, judgment, and — only behind explicit confirmation — the destructive cleanup. The scanner never mutates anything (except the optional `--fetch`); every delete is a separate prompted git command you run after the user approves.
 
 **Never use `cd <dir> && git`** — always `git -C <repo> …` (the compound form can trigger extra permission prompts). The scanner already follows this.
 
@@ -35,14 +35,16 @@ Parse the JSON and group by repo, then by verdict. Lead with the prune candidate
 | Verdict | Meaning | Action |
 |---|---|---|
 | `prune-merged` | branch/worktree merged into default, no local commits ahead | **safe to clean** |
-| `prune-gone` | upstream deleted, no local commits ahead (squash-merge + remote delete) | **safe to clean** |
-| `review-gone-ahead` | upstream gone BUT commits ahead — usually a squash-merged branch (looks "ahead" but is merged); occasionally real unmerged work | **verify against the default branch yourself — do NOT ask the user first.** Check whether the work is already on `<default>`: a squash/merge commit referencing the branch's issue/PR in `git -C <repo> log <default>`, AND/OR the branch's changed files/content present in the `<default>` tree (`git -C <repo> grep`, `ls-tree`, `show <default>:<file>`). If confirmed merged → safe to delete with `-D`. Only surface to the user when verification is genuinely inconclusive (commits that are NOT on `<default>` = real unmerged work). |
+| `prune-gone` | upstream deleted, confirmed no local commits ahead (squash-merge + remote delete) | **safe to clean** |
+| `review-gone-ahead` | upstream gone AND commits ahead — usually a squash-merged branch (looks "ahead" but is merged); occasionally real unmerged work | **You (Claude) do the verification, but never run `-D` without asking first.** Check whether the work is already on `<default>`: a squash/merge commit referencing the branch's issue/PR in `git -C <repo> log <default>`, AND/OR the branch's changed files/content present in the `<default>` tree (`git -C <repo> grep`, `ls-tree`, `show <default>:<file>`). Then present that evidence to the user and get explicit per-item confirmation before deleting with `-D` — this is the one verdict whose deletion can destroy real unmerged work, so it never skips the confirmation step even when your own verification looks conclusive. |
+| `review-gone-unknown` | upstream gone but ahead/behind can't be determined (no resolvable default branch or remote for this repo) | review — same treatment as `review-gone-ahead`: never auto-prune, confirm with the user before any delete |
 | `review-behind` | behind default, not confirmed merged | review — may be unmerged stale work |
 | `review-detached` | detached-HEAD worktree | review, never auto-clean |
 | `review-old` | older than `--age-days`, nothing else | report only |
 | `active` | commits ahead, not merged | **protect** — live work |
 | `protected-default` / `protected-current` / `protected-primary` | the default branch, the current branch, or a primary checkout | **protect** |
 | `blocked-dirty` / `blocked-locked` | worktree has uncommitted changes or is locked | **never clean** |
+| `prunable` | worktree's administrative entry still exists but its directory is gone from disk | admin tidy only — `git worktree prune` (never `worktree remove`, the path doesn't exist) |
 | `in-worktree` | branch is checked out in a worktree | clean the worktree first, then the branch |
 | `bare` / `keep` | bare repo / nothing notable | skip |
 
@@ -61,8 +63,8 @@ If `--prune` was not requested, stop here — report only, and tell the user the
    ```
    git -C <repo> branch -d <branch>
    ```
-   Use `-d` (safe — refuses unmerged). For a `review-gone-ahead` branch you've **verified is merged into `<default>`** (squash commit or content present — see the verdict table), escalate to `-D` (git can't see squash-merges, so `-d` will wrongly refuse). A `review-gone-ahead` branch needs its worktree removed first if it's checked out in one.
-3. **Optional admin tidy:** `git -C <repo> worktree prune` removes stale administrative entries for worktree dirs already deleted from disk (harmless, no working tree touched).
+   Use `-d` (safe — refuses unmerged). A `review-gone-ahead` or `review-gone-unknown` branch is never included in this batch — per the verdict table, those need your own verification plus a separate, explicit per-item user confirmation before `-D` (git can't see squash-merges, so `-d` will wrongly refuse even once merged). Do that as its own deliberate step, not folded into the batch prune. A confirmed one needs its worktree removed first if it's checked out in one.
+3. **Prunable worktrees:** for each `prunable` entry (administrative record whose directory is already gone from disk), run `git -C <repo> worktree prune` — never `worktree remove <path>`, the path doesn't exist. Safe and non-destructive (no working tree to lose).
 
 **Hard guards (never auto-clean, regardless of `--prune`):** the default branch, the current branch, any primary checkout, anything `active`, `blocked-dirty`, `blocked-locked`, `review-*`. These require the user to act deliberately, item by item.
 

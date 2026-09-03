@@ -17,7 +17,7 @@ Skills are namespaced by plugin (e.g. `/general-workflow:roast`).
 
 ### [general-workflow](plugins/general-workflow/)
 
-Reusable skills for planning, research, code review, and PRD writing. No external tools required.
+Reusable skills for planning, research, code review, and PRD writing. Core skills need no external tools - see the plugin's own README, Optional integrations.
 
 | Skill | Description |
 |---|---|
@@ -80,6 +80,7 @@ public audience. Before exporting or re-syncing a skill, check for:
 - [ ] Time-sensitive internal narration ("used to be mandatory, now it isn't") — state the current
       policy plainly instead of narrating its history.
 - [ ] README skill-count tables (root and per-plugin) match the actual directory contents.
+- [ ] Pinned CLI version in `.github/workflows/validate.yml` (`npm install -g @anthropic-ai/claude-code@X.Y.Z`) is reasonably current - `npm view @anthropic-ai/claude-code version` shows latest.
 
 ## Author
 

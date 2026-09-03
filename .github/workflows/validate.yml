@@ -6,18 +6,26 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
       # Pinned deliberately: nothing auto-bumps this - Dependabot's npm ecosystem
       # doesn't watch ad-hoc -g installs in workflow steps. Frozen for CI
-      # reproducibility, not tracking latest; needs a periodic manual bump.
-      - run: npm install -g @anthropic-ai/claude-code@2.1.233
+      # reproducibility, not tracking latest; bump periodically (see README's
+      # maintainer export checklist).
+      - run: npm install -g @anthropic-ai/claude-code@2.1.259
       - run: claude plugin validate .
       - run: |
           for plugin in plugins/*/; do
@@ -31,11 +39,12 @@ jobs:
             plugin_dir="${plugin_dir%/}"
             while IFS= read -r ref; do
               rel="${ref#\$\{CLAUDE_PLUGIN_ROOT\}/}"
+              rel="${rel#\$CLAUDE_PLUGIN_ROOT/}"
               if [ ! -f "$plugin_dir/$rel" ]; then
                 echo "::error::$plugin_dir references missing script: $rel"
                 missing=1
               fi
-            done < <(grep -rhoE '\$\{CLAUDE_PLUGIN_ROOT\}/[A-Za-z0-9_./-]+' "$plugin_dir" --include="SKILL.md" | sort -u)
+            done < <(grep -rhoE '\$\{?CLAUDE_PLUGIN_ROOT\}?/[A-Za-z0-9_./-]+' "$plugin_dir" | sort -u)
           done
           exit $missing
       - name: Check for private-tracker-ID leaks
@@ -52,3 +61,54 @@ jobs:
             exit 1
           fi
           echo "No tracker-ID leaks found."
+      - name: Verify SKILL.md name matches its directory
+        run: |
+          set -euo pipefail
+          mismatch=0
+          while IFS= read -r skill_file; do
+            dir_name="$(basename "$(dirname "$skill_file")")"
+            frontmatter_name="$(grep -m1 '^name:' "$skill_file" | sed 's/^name: *//')"
+            if [ "$dir_name" != "$frontmatter_name" ]; then
+              echo "::error::$skill_file: frontmatter name '$frontmatter_name' != directory '$dir_name'"
+              mismatch=1
+            fi
+          done < <(find plugins -name SKILL.md)
+          exit $mismatch
+      - name: Compile all Python scripts
+        run: |
+          set -euo pipefail
+          find . -name "*.py" -not -path "./.git/*" -print0 | xargs -0 -r python3 -m py_compile
+      - name: Verify README skill tables match actual skills
+        run: |
+          set -euo pipefail
+          mismatch=0
+          on_disk_root="$(find plugins/general-workflow/skills plugins/plane-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
+          on_disk_gw="$(find plugins/general-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
+          on_disk_pw="$(find plugins/plane-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
+          in_readme_root="$(grep -ohE '^\| `[a-z0-9-]+` \|' README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
+          in_readme_gw="$(grep -ohE '^\| `[a-z0-9-]+` \|' plugins/general-workflow/README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
+          in_readme_pw="$(grep -ohE '^\| `[a-z0-9-]+` \|' plugins/plane-workflow/README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
+          if [ "$on_disk_root" != "$in_readme_root" ]; then
+            echo "::error::README.md skill table doesn't match plugins/*/skills on disk"
+            diff <(echo "$on_disk_root") <(echo "$in_readme_root") || true
+            mismatch=1
+          fi
+          if [ "$on_disk_gw" != "$in_readme_gw" ]; then
+            echo "::error::plugins/general-workflow/README.md skill table doesn't match its skills/ dir"
+            diff <(echo "$on_disk_gw") <(echo "$in_readme_gw") || true
+            mismatch=1
+          fi
+          if [ "$on_disk_pw" != "$in_readme_pw" ]; then
+            echo "::error::plugins/plane-workflow/README.md skill table doesn't match its skills/ dir"
+            diff <(echo "$on_disk_pw") <(echo "$in_readme_pw") || true
+            mismatch=1
+          fi
+          exit $mismatch
+      - name: Check for tracked .DS_Store files
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -i ds_store; then
+            echo "::error::Found a tracked .DS_Store file (see above) - remove it and add .gitignore."
+            exit 1
+          fi
+          echo "No tracked .DS_Store files."

@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Pinned (META-91): nothing auto-bumps this - Dependabot's npm ecosystem
+      # Pinned deliberately: nothing auto-bumps this - Dependabot's npm ecosystem
       # doesn't watch ad-hoc -g installs in workflow steps. Frozen for CI
       # reproducibility, not tracking latest; needs a periodic manual bump.
       - run: npm install -g @anthropic-ai/claude-code@2.1.233
@@ -38,3 +38,17 @@ jobs:
             done < <(grep -rhoE '\$\{CLAUDE_PLUGIN_ROOT\}/[A-Za-z0-9_./-]+' "$plugin_dir" --include="SKILL.md" | sort -u)
           done
           exit $missing
+      - name: Check for private-tracker-ID leaks
+        run: |
+          set -euo pipefail
+          # This marketplace is public and generic - it has no legitimate reason
+          # to reference a private issue tracker's IDs. .github/ is excluded so
+          # this check's own pattern text can never self-match.
+          # NOTE: \b is not a POSIX ERE word boundary - `grep -E '\b...'` silently
+          # matches nothing under git grep's ERE engine. Explicit non-alnum/anchor
+          # boundaries instead, confirmed against a planted match before landing.
+          if git grep -InE '(^|[^A-Za-z])(LAB|VDA|WQ1K|BLG|META|GRNH|IPS)-[0-9]+([^A-Za-z0-9]|$)' -- . ':(exclude).github/'; then
+            echo "::error::Found a private tracker ID leaked into the public marketplace (see matches above). Use a generic placeholder like PROJ-123 instead."
+            exit 1
+          fi
+          echo "No tracker-ID leaks found."

@@ -20,8 +20,8 @@ Steps:
 
 4. **Check codebase state**: Read relevant state files, configs, or code to verify what was actually deployed (don't rely only on Plane comments — the codebase is ground truth).
 
-5. **Resume directly on `main` by default.** Isolation is opt-in now, not mandatory. Resuming an existing worktree/branch, creating one if this session genuinely needs isolation, the pre-edit rebase, and the vault merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
+5. **Resume directly on `main` by default.** Isolation is opt-in, not mandatory. Resuming an existing worktree/branch, creating one if this session genuinely needs isolation, the pre-edit rebase, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 
-6. **Identify next atomic step**: one action, which files/areas, how to verify it. For learning-oriented projects (e.g. LAB), explain why this step is needed, not just what it is. Do not implement unless the user says to.
+6. **Identify next atomic step**: one action, which files/areas, how to verify it. For learning-oriented projects, explain why this step is needed, not just what it is. Do not implement unless the user says to.
 
 Put a context-rehydration summary in Plane comment if the issue was stale; always include a usable summary in chat.

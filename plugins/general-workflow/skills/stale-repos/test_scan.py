@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Stdlib-only fixture test for scan.py (META-111). Reproduces the reported data-loss bug
+Stdlib-only fixture test for scan.py. Reproduces the reported data-loss bug
 (remote renamed away from "origin" silently turned unmerged local commits into "prune-gone")
 plus the other fixes from the same issue. Not wired into CI or pytest — a manual check /
 future CI building block.

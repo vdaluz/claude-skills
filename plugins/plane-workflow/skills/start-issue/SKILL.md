@@ -1,11 +1,11 @@
 ---
 name: start-issue
-description: Start work on a Plane issue, fetching context, setting In Progress, and producing a research-backed plan. Use when the user asks to "start issue X", "begin work on LAB-123", or gives an issue ID to work on. Never edits files or runs commands before the user says "go" on the plan.
+description: Start work on a Plane issue, fetching context, setting In Progress, and producing a research-backed plan. Use when the user asks to "start issue X", "begin work on PROJ-123", or gives an issue ID to work on. Never edits files or runs commands before the user says "go" on the plan.
 ---
 
 Start work on a Plane issue.
 
-Arguments: issue ID (e.g. LAB-123) and optionally what we're doing today (1 sentence).
+Arguments: issue ID (e.g. PROJ-123) and optionally what we're doing today (1 sentence).
 
 > **Issue specs are suggestions, not requirements.** Before including any file path, tool, or approach from the issue description in the plan, verify it against your project's actual conventions. Example: a script meant to run on a remote host might belong in an existing automation framework (an Ansible role, a deploy script) rather than a loose one-off; a new service might belong in a tracked config file rather than hardcoded inline. Flag mismatches against what the project actually does and propose the correct approach.
 
@@ -40,13 +40,13 @@ Steps:
 
    Then produce a short research-backed implementation plan (tasks only, no "research X" steps), risks/unknowns. For learning-oriented projects, include a brief "why" for each step. If the issue is a service deployment and your project has a deployment checklist skill or doc, use it as a mandatory checklist. For complex or infrastructure-changing plans, suggest running a review/roast pass before proceeding.
 
-   **If the issue touches UI** (pages under `src/pages/`, components, layouts, styles, or markdown that ships HTML): include a UI verification item in the done-criteria. Scope the check to what actually changed rather than defaulting to a full test suite every time - an isolated, additive change (a new page, a new component, nothing shared touched) only needs a scoped accessibility check on the affected pages plus interactively exercising the change (e.g. with a browser-verification skill if you have one installed, such as general-workflow's `browser-verify`); a shared-surface change (a layout, a shared component, a config/registry file, a dependency bump) needs the full accessibility suite plus the same interactive check, since a shared change can affect pages you didn't touch directly. Record which tier you used and why in the Plane wrap-up comment.
+   **If the issue touches UI** (page/route files — e.g. `src/pages/` in some frameworks — plus components, layouts, styles, or markdown that ships HTML): include a UI verification item in the done-criteria. Scope the check to what actually changed rather than defaulting to a full test suite every time - an isolated, additive change (a new page, a new component, nothing shared touched) only needs a scoped accessibility check on the affected pages plus interactively exercising the change (e.g. with a browser-verification skill if you have one installed, such as general-workflow's `browser-verify`); a shared-surface change (a layout, a shared component, a config/registry file, a dependency bump) needs the full accessibility suite plus the same interactive check, since a shared change can affect pages you didn't touch directly. Record which tier you used and why in the Plane wrap-up comment.
 
    Wait for user "go" before touching files or running commands.
 
 6. Once user approves the plan:
    - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment and remind the user to close out the spike (mark it Done, and if your workflow converts findings into follow-up issues, do that next) and then run `/spike-to-issues` to convert findings into implementation issues.
-   - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the vault merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
+   - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 
      In all cases, post the plan as a Plane comment, then begin making changes.
 

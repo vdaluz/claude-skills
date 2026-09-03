@@ -5,7 +5,7 @@ description: Read a cmux surface to observe terminal output, logs, or browser st
 
 Observe what's on a cmux surface — terminal or browser — in the current or any workspace.
 
-**Context:** The user almost always works inside cmux. You are running inside a cmux Claude surface (`$CMUX_SURFACE_ID`). Use this to observe other panes before running duplicate commands — e.g. check if a server is already running, read a log tail, or inspect what a browser is showing.
+**Context:** this skill assumes you're running inside a cmux Claude surface (`$CMUX_SURFACE_ID` set). Use this to observe other panes before running duplicate commands — e.g. check if a server is already running, read a log tail, or inspect what a browser is showing.
 
 **Exception:** background or scheduled jobs (a cron job, a LaunchAgent, a CI runner) run outside cmux. Do not assume cmux is available in that context.
 

@@ -44,7 +44,7 @@ Then, add these to the appropriate settings file (see Step 7).
    - **All gh read-only subcommands:** `gh pr view`, `gh pr list`, `gh pr diff`, `gh pr checks`, `gh pr status`, `gh issue view`, `gh issue list`, `gh issue status`, `gh run view`, `gh run list`, `gh workflow list`, `gh workflow view`, `gh repo view`, `gh release view`, `gh release list`, `gh api` (GET), `gh auth status`, etc.
    - **Docker read-only subcommands:** `docker ps`, `docker images`, `docker logs`, `docker inspect`.
 
-   If you have Claude Code's own source checked out and want to confirm precisely, its read-only-command allowlists live in the Bash tool's source (search for `READONLY_COMMANDS`, `GIT_READ_ONLY_COMMANDS`, `GH_READ_ONLY_COMMANDS` or similar). Most users won't have this; the list above is a good-enough approximation.
+   The list above is a good-enough approximation of Claude Code's own built-in read-only allowlist; treat it as a starting point, not an exhaustive spec.
 
 4. **Pick the pattern form.** Use the narrowest pattern that still covers the observed usage:
    - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)` — note the space before `*`, which is required for prefix matching to work correctly.

@@ -17,7 +17,7 @@ Skills are namespaced by plugin (e.g. `/cmux-tools:read-surface`).
 
 ### [cmux-tools](plugins/cmux-tools/)
 
-Skills for [cmux](https://github.com/vdaluz/cmux) terminal multiplexer users.
+Skills for [cmux](https://github.com/manaflow-ai/cmux) users (a macOS terminal built for AI coding agents).
 
 **Prerequisite:** cmux installed and running; Claude launched inside a cmux session.
 

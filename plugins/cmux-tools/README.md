@@ -1,10 +1,10 @@
 # cmux-tools
 
-Skills for [cmux](https://github.com/vdaluz/cmux) terminal multiplexer users.
+Skills for [cmux](https://github.com/manaflow-ai/cmux) users (a macOS terminal built for AI coding agents).
 
 ## Prerequisite
 
-[cmux](https://github.com/vdaluz/cmux) must be installed and running. Claude Code must be launched inside a cmux session (the `$CMUX_SURFACE_ID` environment variable must be set).
+[cmux](https://github.com/manaflow-ai/cmux) must be installed and running. Claude Code must be launched inside a cmux session (the `$CMUX_SURFACE_ID` environment variable must be set).
 
 ## Install
 

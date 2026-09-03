@@ -6,7 +6,7 @@ effort: xhigh
 
 Research a topic across in-repo docs, official documentation, and communities.
 
-Arguments: topic/question, issue ID (optional — defaults to active issue), constraints/scope.
+Arguments: topic/question, issue ID (optional — if an issue tracker is in use, defaults to the active issue), constraints/scope.
 
 ## Steps
 

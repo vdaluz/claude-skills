@@ -51,4 +51,4 @@ Arguments: what went wrong or what pattern was found, desired correction, which 
 
 **5. Note the source**
 
-Add a brief comment in any active issue noting what rule was updated and why. This creates a decision trail.
+If an issue tracker is in use, add a brief comment on any active issue noting what rule was updated and why. This creates a decision trail.

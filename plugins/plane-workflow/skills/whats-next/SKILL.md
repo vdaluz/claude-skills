@@ -1,10 +1,10 @@
 ---
 name: whats-next
-description: Show what's next for a Plane project across In Progress, Rolling, Todo, Backlog, and Blocked sections. Use when the user asks what's next, what to work on, or runs /whats-next.
+description: Show what's next for a Plane project across In Progress, Todo, Backlog, Blocked, and (if your project uses one) a rolling/recurring state. Use when the user asks what's next, what to work on, or runs /whats-next.
 effort: low
 ---
 
-Show what's next for a Plane project: In Progress → Rolling (due) → Todo → Backlog → Blocked.
+Show what's next for a Plane project: In Progress → Rolling (due, if your project has one) → Todo → Backlog → Blocked.
 
 Arguments: project identifier — optional; auto-detected from cwd if omitted, or ask the user. Optional filter/sort flags:
 

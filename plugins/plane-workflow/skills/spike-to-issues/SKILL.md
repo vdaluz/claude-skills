@@ -5,7 +5,7 @@ description: Convert a completed spike's findings into concrete implementation i
 
 Convert the findings from a completed spike issue into actionable implementation issues.
 
-Arguments: spike issue ID (e.g. BLG-3). Must be a spike that is either Done or has a findings comment posted.
+Arguments: spike issue ID (e.g. PROJ-3). Must be a spike that is either Done or has a findings comment posted.
 
 ## When to use
 
@@ -26,7 +26,7 @@ Run this after closing out a spike, or any time a spike has documented findings 
    - For any new issues: get the Backlog state UUID for this project (from a cached reference file if you keep one, or via `mcp__plane__list_states` - the project UUID is already known from step 1's retrieve). Then call `mcp__plane__create_work_item` directly per issue, applying **create-issue**'s step 4 priority-inference rules rather than invoking that skill per issue.
    - For existing issues that need description updates, use `mcp__plane__update_work_item`.
    - Remove the "blocked by spike" note from any issues that are now unblocked.
-7. Post a comment on the spike issue linking to the newly created/updated issues (e.g. "Findings converted to BLG-12, BLG-13. BLG-8 unblocked and updated.").
+7. Post a comment on the spike issue linking to the newly created/updated issues (e.g. "Findings converted to PROJ-12, PROJ-13. PROJ-8 unblocked and updated.").
 8. Output a summary: what was created, what was updated, what is now unblocked.
 
 ## Rules

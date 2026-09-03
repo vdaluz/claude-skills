@@ -10,8 +10,8 @@ know another agent is actively working this repo right now, or the user asks for
 
 ## Creating isolation
 
-- Worktree: `EnterWorktree` (branch named after the issue ID, e.g. `lab-571-apprise-mailrise`).
-  Always prompts for confirmation now — reach for it deliberately, not by default.
+- Worktree: `EnterWorktree` (branch named after the issue ID, e.g. `proj-571-feature-name`).
+  Always prompts for confirmation — reach for it deliberately, not by default.
 - Plain branch (no worktree): `git checkout -b <issue-id>-<slug>`.
 
 ## Resuming existing isolation

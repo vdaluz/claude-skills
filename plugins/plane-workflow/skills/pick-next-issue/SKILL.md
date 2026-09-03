@@ -1,6 +1,6 @@
 ---
 name: pick-next-issue
-description: Recommend what to work on next in a Plane project, presenting 3 ranked candidates with brief rationale instead of silently picking one. If everything actionable is Blocked, re-checks each blocker before giving up. Use when the user asks what to pick up next, wants a recommendation (not just a raw list), or runs /pick-next-issue.
+description: Recommend what to work on next in a Plane project, presenting 3 ranked candidates with brief rationale instead of silently picking one. Use when the user asks what to pick up next, wants a recommendation, or runs /pick-next-issue.
 ---
 
 Recommend what to work on next in a Plane project. This is the opinionated counterpart to a raw "what's next" listing (see the `whats-next` skill if you have it installed, which prints candidates with zero commentary) — this skill reads the candidates, ranks them, and presents exactly 3 with a one-line reason each, then lets the user choose. Works on any Plane project — no per-project hardcoding required in the core logic.

@@ -1,6 +1,7 @@
 ---
 name: reprioritize-backlog
-description: Reorder a Plane project's Backlog (and optionally Todo) by urgency and dependency - blocked issues sort after their blockers, high-leverage issues rank higher, ties broken by content not age. Proposes the new order, applies only after confirmation. Use when the user asks to reprioritize, reorder, triage, or groom a backlog.
+description: Reorder a Plane project's Backlog by urgency and dependency - blocked issues sort after blockers, high-leverage issues rank higher. Proposes the order, applies only after confirmation.
+disable-model-invocation: true
 ---
 
 Reorder a Plane project's Backlog by urgency and dependency, then apply the new order (and any flagged priority changes) only after explicit approval. Works on any Plane project — no per-project hardcoding required.

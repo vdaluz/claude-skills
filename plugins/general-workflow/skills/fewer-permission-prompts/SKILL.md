@@ -1,6 +1,6 @@
 ---
 name: fewer-permission-prompts
-description: Scan recent session transcripts for repeated read-only tool calls and propose an allowlist to reduce permission prompts. Use when the user asks to reduce prompts, tune permissions, or runs /fewer-permission-prompts.
+description: Scan recent session transcripts for repeated read-only tool calls and propose an allowlist to reduce permission prompts.
 allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-permission-prompts/scripts/scan_tool_calls.py)
 disable-model-invocation: true
 ---

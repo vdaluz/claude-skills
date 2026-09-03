@@ -1,6 +1,7 @@
 ---
 name: spike-to-issues
-description: Convert a completed spike's findings into concrete implementation issues in Plane. Use when the user wants to "turn spike findings into issues", "convert this spike", or after closing out a spike that has a findings comment. Requires a spike that is Done or has findings already posted — not for spikes still in progress.
+description: Convert a completed spike's findings into concrete implementation issues in Plane. Requires the spike to be Done or have findings posted.
+disable-model-invocation: true
 ---
 
 Convert the findings from a completed spike issue into actionable implementation issues.

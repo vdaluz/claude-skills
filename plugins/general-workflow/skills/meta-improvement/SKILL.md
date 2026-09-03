@@ -1,6 +1,6 @@
 ---
 name: meta-improvement
-description: Update a rule, skill, or CLAUDE.md entry after a mistake a rule could have prevented, a pattern repeated 3+ times, or a better approach found during work. Use when the user says "remember this", "update the rule", or a mistake just happened. Diagnoses root cause before editing; keeps changes minimal.
+description: Update a rule, skill, or CLAUDE.md entry after a mistake a rule could have prevented, a pattern repeated 3+ times, or a better approach found during work. Use when the user says "remember this", "update the rule", or a mistake just happened.
 ---
 
 Update a rule or skill based on a mistake, repeated pattern, or better approach discovered during work.

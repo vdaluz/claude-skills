@@ -1,6 +1,6 @@
 ---
 name: fewer-fetch-prompts
-description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts. Trigger phrases- "reduce WebFetch prompts", "fewer fetch prompts", "WebFetch keeps asking", "add domains to the allowlist", "tune WebFetch permissions". Run when WebFetch approvals are becoming friction.
+description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts.
 allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/scan_domains.py) Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py *)
 disable-model-invocation: true
 effort: low

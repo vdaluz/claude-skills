@@ -20,7 +20,7 @@ Before any searching, shortlisting, evaluation, or recommendation, make the user
 
 **1. Scope and topic**
 
-Use provided issue ID, or detect from recent conversation (MCP calls, issue mentions). Derive topic from issue name/description if not given.
+Use provided issue ID, or detect from recent conversation (MCP calls, issue mentions). Derive topic from issue name/description if not given. **A detected (not user-provided) issue ID is a guess about the write target, not a confirmed one** — before step 5 posts anything to it, confirm it's the right issue (state it plainly, e.g. "posting findings to PROJ-123 — say if that's wrong") rather than assuming a detected ID is correct.
 
 **2. Research in this order**
 
@@ -38,8 +38,8 @@ If your environment has an advisor-style second-opinion tool available, call it 
 
 **5. Output**
 
-- **Issue tracker comment** (full detail): findings (bullets), options with pros/cons, recommendation with rationale, risks/unknowns, all sources. Post via `mcp__plane__create_work_item_comment` if Plane MCP is available.
-- **Chat summary** (5–10 bullets): decision/recommendation, key evidence, next step — usable without opening the issue tracker.
+- **Chat summary** (5–10 bullets): decision/recommendation, key evidence, next step — usable without opening the issue tracker. Always produced, regardless of whether an issue tracker comment follows.
+- **Issue tracker comment** (full detail): findings (bullets), options with pros/cons, recommendation with rationale, risks/unknowns, all sources. Post via `mcp__plane__create_work_item_comment` only when Plane MCP is available AND a confirmed issue ID exists (user-provided, or a detected one confirmed per step 1). No confirmed ID or no Plane MCP: chat summary only, don't guess a target.
 
 **6. No implementation**
 

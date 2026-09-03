@@ -27,7 +27,8 @@ Arguments: project name or issue tracker identifier, feature/scope description (
 4. Draft the PRD using the sections above. Be specific and concrete — avoid vague goals like "improve UX". Write requirements in testable language ("the system shall...").
 5. Keep it lean: no padding, no filler transitions, no AI buzzwords. Each section earns its place.
 6. Determine target:
-   - **Plane project page** (default if Plane MCP is available): create via `mcp__plane__create_project_page` on the matching project. Title: "PRD: <feature or project name>".
+   - **Chat output** (default): if Plane MCP is unavailable, or the user gave no project identifier and no file path, output the PRD directly in chat. Never guess a target.
+   - **Plane project page**: only if Plane MCP is available AND the user named a project/issue-tracker identifier in the arguments, or confirms one via `AskUserQuestion` when asked which project. Never create against a guessed project. Create via `mcp__plane__create_project_page` on the matching project. Title: "PRD: <feature or project name>".
    - **Markdown file**: write to the path given by the user (e.g. `docs/prd.md`). Only create a file if the user explicitly asked for one.
 7. Output the target location (Plane page URL or file path) and a one-paragraph summary of the PRD's key decisions.
 

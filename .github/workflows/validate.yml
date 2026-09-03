@@ -47,7 +47,7 @@ jobs:
           # NOTE: \b is not a POSIX ERE word boundary - `grep -E '\b...'` silently
           # matches nothing under git grep's ERE engine. Explicit non-alnum/anchor
           # boundaries instead, confirmed against a planted match before landing.
-          if git grep -InE '(^|[^A-Za-z])(LAB|VDA|WQ1K|BLG|META|GRNH|IPS)-[0-9]+([^A-Za-z0-9]|$)' -- . ':(exclude).github/'; then
+          if git grep -InE '(^|[^A-Za-z])(LAB|VDA|WQ1K|BLG|DP|DRR|GRNH|LUCHA|FAIR|SHKZ|AST|META|FTB|SOM|PRSP|MKT|IDEA|IPS)-[0-9]+([^A-Za-z0-9]|$)' -- . ':(exclude).github/'; then
             echo "::error::Found a private tracker ID leaked into the public marketplace (see matches above). Use a generic placeholder like PROJ-123 instead."
             exit 1
           fi

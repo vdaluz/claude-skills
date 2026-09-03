@@ -51,8 +51,8 @@ def scan_raw_urls():
                 for line in fp:
                     try:
                         msg = json.loads(line)
-                        for url in re.findall(r'https?://([^/"\s\'\\]+)', json.dumps(msg)):
-                            domain = url.split('/')[0].lower().split(':')[0]
+                        for domain in re.findall(r'https?://([A-Za-z0-9.-]+)', json.dumps(msg)):
+                            domain = domain.lower().rstrip('.')
                             if '.' in domain:
                                 domains[domain] += 1
                     except Exception:

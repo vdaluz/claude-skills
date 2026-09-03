@@ -12,16 +12,23 @@ to confirm.
 
 import json
 import os
+import re
 import shutil
 import sys
 from datetime import datetime
 
 SETTINGS_PATH = os.path.join(os.path.expanduser('~'), '.claude', 'settings.json')
+DOMAIN_RE = re.compile(r'^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$')
 
 
 def load():
-    with open(SETTINGS_PATH) as f:
-        return json.load(f)
+    try:
+        with open(SETTINGS_PATH) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError as e:
+        sys.exit(f'Error: {SETTINGS_PATH} contains invalid JSON: {e}')
 
 
 def webfetch_entries(settings):
@@ -40,11 +47,26 @@ def cmd_add(domains):
     settings = load()
     allow = settings.setdefault('permissions', {}).setdefault('allow', [])
 
-    backup_path = f'{SETTINGS_PATH}.bak-{datetime.now():%Y%m%d%H%M%S}'
-    shutil.copy2(SETTINGS_PATH, backup_path)
+    valid_domains = []
+    for domain in domains:
+        if DOMAIN_RE.match(domain):
+            valid_domains.append(domain)
+        else:
+            print(f'Skipping invalid domain: {domain!r} (must be a bare hostname, no scheme/path/port)')
+
+    if not valid_domains:
+        sys.exit('No valid domains to add.')
+
+    if os.path.exists(SETTINGS_PATH):
+        backup_path = f'{SETTINGS_PATH}.bak-{datetime.now():%Y%m%d%H%M%S}'
+        shutil.copy2(SETTINGS_PATH, backup_path)
+        print(f'Backed up settings.json to {backup_path}')
+    else:
+        os.makedirs(os.path.dirname(SETTINGS_PATH), exist_ok=True)
+        print(f'{SETTINGS_PATH} does not exist yet; creating it.')
 
     added = []
-    for domain in domains:
+    for domain in valid_domains:
         entry = f'WebFetch(domain:{domain})'
         if entry not in allow:
             allow.append(entry)
@@ -53,7 +75,6 @@ def cmd_add(domains):
     with open(SETTINGS_PATH, 'w') as f:
         json.dump(settings, f, indent=4)
 
-    print(f'Backed up settings.json to {backup_path}')
     print(f'Added {len(added)} entries:')
     for a in added:
         print(' ', a)

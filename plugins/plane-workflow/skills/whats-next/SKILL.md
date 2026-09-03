@@ -1,10 +1,10 @@
 ---
 name: whats-next
-description: Show what's next for a Plane project across In Progress, Todo, Backlog, Blocked, and (if your project uses one) a rolling/recurring state. Use when the user asks what's next, what to work on, or runs /whats-next.
+description: Show what's next for a Plane project across In Progress, Todo, Backlog, and Blocked. Use when the user asks what's next, what to work on, or runs /whats-next.
 effort: low
 ---
 
-Show what's next for a Plane project: In Progress → Rolling (due, if your project has one) → Todo → Backlog → Blocked.
+Show what's next for a Plane project: In Progress → Todo → Backlog → Blocked.
 
 Arguments: project identifier — optional; auto-detected from cwd if omitted, or ask the user. Optional filter/sort flags:
 
@@ -29,7 +29,7 @@ When issues are excluded this way, do not silently drop them from the user's men
 
 If you keep a cwd-to-project shortcut table, try it first. Otherwise ask which project, or resolve it via `mcp__plane__list_projects`.
 
-Get the project ID and state UUIDs (In Progress, Rolling if your project uses one, Todo, Backlog, Blocked) — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise.
+Get the project ID and state UUIDs (In Progress, Todo, Backlog, Blocked) — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise.
 
 ## Step 2 — Fetch and partition issues
 
@@ -37,7 +37,6 @@ See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("`pql`/structur
 
 Partition by state name/group:
 - **In Progress** (group `started`)
-- **Rolling (due)** — only if your project has a dedicated recurring/rolling state, and only issues with `target_date` on or before today
 - **Todo** (group `unstarted`)
 - **Backlog** (group `backlog`)
 - **Blocked** (a state literally named "Blocked", if the project has one)
@@ -49,7 +48,7 @@ Apply `--include-labels`/`--exclude-labels` and the default content filter (Step
 
 ## Step 3 — Display
 
-Show the In Progress, Rolling (due), Todo, Backlog, and Blocked sections, **capped at 20 issues total** across all sections combined. Fill from the top of each section in order (In Progress → Rolling → Todo → Backlog → Blocked) until the cap is reached. If a section is cut short, append a line like `… and N more` so the user knows there are additional items.
+Show the In Progress, Todo, Backlog, and Blocked sections, **capped at 20 issues total** across all sections combined. Fill from the top of each section in order (In Progress → Todo → Backlog → Blocked) until the cap is reached. If a section is cut short, append a line like `… and N more` so the user knows there are additional items.
 
 **In Progress always shows** — it is not affected by `--include-content` or any other flag, and is never omitted for brevity. It's the whole point of asking "what's next": knowing what's already started.
 
@@ -62,8 +61,6 @@ Show the In Progress, Rolling (due), Todo, Backlog, and Blocked sections, **capp
 If you don't have titles in hand (e.g. you only fetched IDs), fetch them before displaying — do not display IDs-only and call it done.
 
 **Self-check before sending (mandatory).** Before sending any message that names 2+ issue IDs from this project, re-read your own draft: does every `<PROJECT>-<number>` appear on its own table row or list line with a title next to it? If any ID appears bare — in a sentence, a parenthetical, or a comma-separated run — stop and reformat into a table before sending. Do this check even when the IDs are just part of a closing summary, not the "real" whats-next display.
-
-The **Rolling (due)** section appears only when at least one rolling issue has a `target_date` on or before today. Rolling issues never close — after completing one, bump its `target_date` to the next occurrence.
 
 **Do not** add any commentary, recommendation, prioritization, or opinion about which issue to work on next, what stands out, or what to do. Just the list. If the user wants an opinion, they will ask for it explicitly — that's a different skill's job (see `pick-next-issue` if you have it installed).
 

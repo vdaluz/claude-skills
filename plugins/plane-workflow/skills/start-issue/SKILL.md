@@ -14,16 +14,9 @@ Steps:
 
 2. Fetch issue via `mcp__plane__retrieve_work_item_by_identifier`. **ALWAYS also read the issue's own comments** via `mcp__plane__list_work_item_comments` — never the description alone. Comments routinely carry prior-session notes, decisions, status changes, and blockers ("scan already done", "blocked on X") that the description does not. Check if it is a spike (title starts with "Spike:" or has a "spike" label). Summarize in 3–6 bullets: goal, current status (incl. anything from comments), constraints, open questions.
 
-3. **Rename the session.** On macOS, `echo "/rename <ID> - <title>" | pbcopy` copies the rename command to the clipboard (swap in your platform's clipboard tool, or skip it — copying is a convenience, not a requirement). Output the session rename command as a **prominent labeled block** either way — never inline or buried in prose:
+3. Get state UUIDs (from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise). Set status to **In Progress** via `mcp__plane__update_work_item`. Add required labels if your project has any (e.g. a label your team always applies to a given issue type) — check project-specific label rules in the project's `CLAUDE.md`.
 
-   > **Run this to rename your session:**
-   > `/rename <ID> - <title>`
-
-   Do not skip or defer this step. Do not proceed to planning before this block appears in the response.
-
-4. Get state UUIDs (from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise). Set status to **In Progress** via `mcp__plane__update_work_item`. Add required labels if your project has any (e.g. a label your team always applies to a given issue type) — check project-specific label rules in the project's `CLAUDE.md`.
-
-5. Research and plan:
+4. Research and plan:
 
    ### Spike path
    Produce a research plan — what to test, what docs/APIs to read, what questions to answer, and what the done criteria are (findings documented in a Plane comment). No worktree. No code changes expected.
@@ -44,7 +37,7 @@ Steps:
 
    Wait for user "go" before touching files or running commands.
 
-6. Once user approves the plan:
+5. Once user approves the plan:
    - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment and remind the user to close out the spike (mark it Done, and if your workflow converts findings into follow-up issues, do that next) and then run `/spike-to-issues` to convert findings into implementation issues.
    - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 

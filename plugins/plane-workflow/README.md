@@ -43,7 +43,6 @@ After install, skills are available namespaced: `/plane-workflow:start-issue`, `
 
 ## Optional integrations
 
-- **`pbcopy`** (macOS): the session rename step optionally copies the rename command to clipboard. Falls back gracefully on non-macOS systems.
 - **A browser-verification skill** (e.g. general-workflow's `browser-verify`): if you have one installed, `start-issue` points to it for exercising UI changes before marking them done. Not required - the UI-verification step works without it, just less thoroughly.
 
 ## Manual install (without the marketplace)

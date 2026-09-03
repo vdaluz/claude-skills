@@ -8,22 +8,12 @@ Add the marketplace, then install any plugin:
 
 ```
 /plugin marketplace add vdaluz/claude-skills
-/plugin install cmux-tools@vdaluz-skills
+/plugin install general-workflow@vdaluz-skills
 ```
 
-Skills are namespaced by plugin (e.g. `/cmux-tools:read-surface`).
+Skills are namespaced by plugin (e.g. `/general-workflow:roast`).
 
 ## Plugins
-
-### [cmux-tools](plugins/cmux-tools/)
-
-Skills for [cmux](https://github.com/manaflow-ai/cmux) users (a macOS terminal built for AI coding agents).
-
-**Prerequisite:** cmux installed and running; Claude launched inside a cmux session.
-
-| Skill | Description |
-|---|---|
-| `read-surface` | Read a terminal pane or browser tab without running a separate command |
 
 ### [general-workflow](plugins/general-workflow/)
 
@@ -62,7 +52,7 @@ Skills for [Plane](https://plane.so) project management.
 Copy any skill directory into `~/.claude/skills/`:
 
 ```bash
-cp -r plugins/cmux-tools/skills/read-surface ~/.claude/skills/
+cp -r plugins/general-workflow/skills/roast ~/.claude/skills/
 ```
 
 Then invoke as `/read-surface` (no namespace prefix). Some skills have extra manual-install requirements - plane-workflow's skills need `skills/_shared` copied alongside them, and two general-workflow skills are marketplace-only. See each plugin's own README for the details.

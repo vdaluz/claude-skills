@@ -1,19 +1,11 @@
 {
   "name": "vdaluz-skills",
-  "description": "Shareable Claude Code skills for cmux, general workflow planning/review, and Plane project management",
+  "description": "Shareable Claude Code skills for general workflow planning/review and Plane project management",
   "owner": {
     "name": "Victor Da Luz",
     "url": "https://github.com/vdaluz"
   },
   "plugins": [
-    {
-      "name": "cmux-tools",
-      "source": "./plugins/cmux-tools",
-      "description": "Skills for cmux terminal multiplexer users — read terminal panes, browser tabs, and surfaces from Claude",
-      "version": "0.1.1",
-      "category": "developer-tools",
-      "keywords": ["cmux", "terminal", "read-surface", "screen-reading"]
-    },
     {
       "name": "general-workflow",
       "source": "./plugins/general-workflow",
@@ -26,7 +18,7 @@
       "name": "plane-workflow",
       "source": "./plugins/plane-workflow",
       "description": "Skills for Plane project management - create, start, and continue issues; see and pick what's next; reprioritize the backlog; convert PRDs and spikes into issues",
-      "version": "0.5.5",
+      "version": "0.5.6",
       "category": "project-management",
       "keywords": ["plane", "issues", "project-management", "prd", "workflow"]
     }

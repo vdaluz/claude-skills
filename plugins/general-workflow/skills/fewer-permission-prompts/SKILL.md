@@ -47,7 +47,7 @@ Then, add these to the appropriate settings file (see Step 7).
    The list above is a good-enough approximation of Claude Code's own built-in read-only allowlist; treat it as a starting point, not an exhaustive spec.
 
 4. **Pick the pattern form.** Use the narrowest pattern that still covers the observed usage:
-   - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)`. The space-before-`*` form and the `Bash(git log:*)` suffix form are documented as equivalent trailing wildcards — prefer the space form because it's what Claude Code's own "Always allow" permission dialog writes, and because `:*` is only recognized at the very end of a pattern while the space form also works mid-pattern.
+   - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)`. The space-before-`*` form and the `Bash(git log:*)` suffix form are documented as equivalent trailing wildcards — prefer the space form because it's what Claude Code's own permission dialog writes when you select "Yes, and don't ask again", and because `:*` is only recognized at the very end of a pattern while the space form also works mid-pattern.
    - If a single exact invocation is common: use `Bash(foo)` with no wildcard.
    - For MCP: use the full tool name verbatim (no wildcard needed; they're already specific).
    - Never widen a pattern to the point that it conflicts with the rules above (no arbitrary code execution, no mutation/side effects).

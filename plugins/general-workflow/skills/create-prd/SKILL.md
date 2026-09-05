@@ -1,6 +1,7 @@
 ---
 name: create-prd
 description: Create a PRD (Product Requirements Document) for a project or feature. Use when the user asks to "write a PRD", "spec this out", or "create requirements" for a new project or feature area before breaking it into issues.
+argument-hint: "[project] [scope] [target]"
 ---
 
 Create a PRD (Product Requirements Document) for a project or feature.

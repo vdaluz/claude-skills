@@ -1,6 +1,7 @@
 ---
 name: browser-verify
 description: Interactively drive a real browser (via the Playwright MCP server, using your actual installed browser) to verify a UI/frontend change works. Use for any repo with a web UI on a local dev server, after a UI/frontend change, before marking it done.
+argument-hint: "[what-changed] [pages-or-flow]"
 ---
 
 Verify a UI/frontend change by actually driving it in a browser, not just building/linting it.

@@ -1,6 +1,7 @@
 ---
 name: meta-improvement
 description: Update a rule, skill, or CLAUDE.md entry after a mistake a rule could have prevented, a pattern repeated 3+ times, or a better approach found during work. Use when the user says "remember this", "update the rule", or a mistake just happened.
+argument-hint: "[what-went-wrong] [correction] [rule-or-skill]"
 ---
 
 Update a rule or skill based on a mistake, repeated pattern, or better approach discovered during work.
@@ -18,7 +19,7 @@ Arguments: what went wrong or what pattern was found, desired correction, which 
 
 **1. Identify the rule to update**
 
-- Is this a global behavior? → `~/.claude/CLAUDE.md` or `~/.claude/skills/`
+- Is this a global behavior? → `~/.claude/CLAUDE.md` or `~/.claude/skills/`. **If the skill lives in a plugin** (installed from a marketplace like `claude-skills`): edit the source in that plugin's own repo, not the installed copy under the plugin cache — a marketplace update overwrites cache edits. For a one-off local change that shouldn't go upstream, add a project-level `.claude/skills/<name>/SKILL.md` override instead.
 - Is this project-specific? → `<project>/CLAUDE.md` or `<project>/.claude/skills/`
 - Is this about a specific workflow? → the relevant skill file
 

@@ -47,7 +47,7 @@ Then, add these to the appropriate settings file (see Step 7).
    The list above is a good-enough approximation of Claude Code's own built-in read-only allowlist; treat it as a starting point, not an exhaustive spec.
 
 4. **Pick the pattern form.** Use the narrowest pattern that still covers the observed usage:
-   - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)` — note the space before `*`, which is required for prefix matching to work correctly.
+   - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)`. The space-before-`*` form and the `Bash(git log:*)` suffix form are documented as equivalent trailing wildcards — prefer the space form because it's what Claude Code's own "Always allow" permission dialog writes, and because `:*` is only recognized at the very end of a pattern while the space form also works mid-pattern.
    - If a single exact invocation is common: use `Bash(foo)` with no wildcard.
    - For MCP: use the full tool name verbatim (no wildcard needed; they're already specific).
    - Never widen a pattern to the point that it conflicts with the rules above (no arbitrary code execution, no mutation/side effects).
@@ -68,7 +68,7 @@ Then, add these to the appropriate settings file (see Step 7).
 
 7. **Write entries to the correct settings file.**
 
-   **Default: `~/.claude/settings.json` (user-level).** Generic permissions — MCP tools, `ping`, `curl`, `dig`, `gh`, `make`, and similar — go here so they apply across all projects without duplication.
+   **Default: `~/.claude/settings.json` (user-level).** Generic permissions — MCP tools, `ping`, `dig`, `gh pr view *`, and similar read-only commands — go here so they apply across all projects without duplication. Don't list `curl` or `make` as examples here without a narrow form attached: an unqualified `curl`/`make` example reads as endorsing a blanket wildcard, which step 2 above explicitly forbids for `make *` and step 2's mutation rule also covers unscoped `curl` (a POST/PUT/DELETE, or a write to disk via `-o`). A narrow, already-vetted form (e.g. `Bash(curl -sI *)`, `Bash(make validate)`) is fine to add here — the point is the pattern must be safety-vetted before landing in this generic-entries list, not that curl/make can never appear.
 
    **Exception: project-level `.claude/settings.json`** only when the pattern itself is tightly coupled to that specific project — i.e., the pattern literally contains a project-specific URL, hostname, or path. A pattern that fires identically in any project goes in the user-level file.
 

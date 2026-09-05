@@ -1,9 +1,9 @@
 ---
 name: pick-next-issue
-description: Recommend what to work on next in a Plane project, presenting 3 ranked candidates with brief rationale instead of silently picking one. Use when the user asks what to pick up next, wants a recommendation, or runs /pick-next-issue.
+description: Recommend what to work on next in a Plane project, presenting up to 4 ranked candidates with brief rationale instead of silently picking one. Use when the user asks what to pick up next, wants a recommendation, or runs /pick-next-issue.
 ---
 
-Recommend what to work on next in a Plane project. This is the opinionated counterpart to a raw "what's next" listing (see the `whats-next` skill if you have it installed, which prints candidates with zero commentary) — this skill reads the candidates, ranks them, and presents exactly 3 with a one-line reason each, then lets the user choose. Works on any Plane project — no per-project hardcoding required in the core logic.
+Recommend what to work on next in a Plane project. This is the opinionated counterpart to a raw "what's next" listing (see the `whats-next` skill if you have it installed, which prints candidates with zero commentary) — this skill reads the candidates, ranks them, and presents up to 4 with a one-line reason each (fewer plus an explicit option to stop the session, if the pool is thin), then lets the user choose. Works on any Plane project — no per-project hardcoding required in the core logic.
 
 Arguments: project identifier — optional, auto-detected from cwd. Optional `--include-todo-only` to skip Backlog and only consider Todo (for projects where Backlog is explicitly "not yet actionable").
 
@@ -31,13 +31,14 @@ If your project uses a label or title convention to separate content backlog (bl
    - Overdue/due-soon bump: any candidate with `target_date` on or before today (or within a few days) gets an urgency bump.
    - Best-effort blocking leverage: for the top ~15 by the above, probe `mcp__plane__list_work_item_relations(project_id, work_item_id)` once on the first candidate. If that call 404s, skip the leverage check entirely for the rest of the run (relations unavailable this run - unknown leverage, not zero). Otherwise call it for each of the ~15 and note how many other in-scope issues each one blocks, treating any individual pydantic-validation-error issue as unknown leverage rather than skipping the rest. See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can fail entirely, two different ways") for the full handling.
    - Take the top 6-10 by this cheap score as the shortlist.
-2. **Read the shortlist for real** — full `description_html`, AND `mcp__plane__list_work_item_comments` for every single shortlisted candidate, no exceptions. Skipping the comments call is a common way to produce a wrong rationale: a description can cite something (a bug, a blocker) that a later comment already resolved or marked out of scope. A description can be stale in a way only the comments reveal — do not treat "read the shortlist" as description-only. If you catch yourself about to present options without having called this for every one of the 3, stop and do it first. Also skim any project notes/memory you keep for this project — they often carry live context (an active initiative, a current deadline, a "this is the flagship feature" note) that changes what "makes sense next" means beyond raw priority. This step is what makes the recommendation actually good instead of a mechanical sort — use judgment, the same kind a competent engineer would use picking their own next task:
+2. **Read the shortlist for real** — full `description_html`, AND `mcp__plane__list_work_item_comments` for every single shortlisted candidate, no exceptions. Skipping the comments call is a common way to produce a wrong rationale: a description can cite something (a bug, a blocker) that a later comment already resolved or marked out of scope. A description can be stale in a way only the comments reveal — do not treat "read the shortlist" as description-only. If you catch yourself about to present options without having called this for every one of the candidates you're about to present, stop and do it first. Also skim any project notes/memory you keep for this project — they often carry live context (an active initiative, a current deadline, a "this is the flagship feature" note) that changes what "makes sense next" means beyond raw priority. This step is what makes the recommendation actually good instead of a mechanical sort — use judgment, the same kind a competent engineer would use picking their own next task:
    - Concrete and well-scoped beats vague and open-ended ("fix this specific null check" beats "improve the UX, make sure it's good").
    - A correctness bug in something load-bearing outranks a cosmetic issue or a nice-to-have feature, all else equal.
    - An issue that unblocks several others (from the leverage check) outranks one that unblocks nothing.
+   - **Favor issues with no human-intervention step on the critical path.** An issue you can carry start-to-finish yourself (code, config, docs, git/deploy work) outranks one whose plan requires a manual action partway through — a GUI click only the user can make, an external account/signup, physical/hardware access, or a decision only they can make — even at equal priority. Human-gated work stalls an autonomous session; when a candidate needs a human step, say so in its rationale rather than letting the user find out mid-work.
    - Live project context matters — if your notes say something is the active/current focus, work that touches it ranks higher than equally-priority-tagged work that doesn't.
-   - Don't present 3 near-duplicates (e.g. three cosmetic label-overlap bugs) if the shortlist has more variety than that — favor a set that gives the user a real choice.
-3. Select exactly 3. For each, write a **brief** rationale (1-2 sentences, concrete — cite something from the actual issue, not a generic "this seems important") explaining why it's a reasonable next pick, and how it compares to the others if relevant.
+   - Don't present near-duplicates (e.g. four cosmetic label-overlap bugs) if the shortlist has more variety than that — favor a set that gives the user a real choice.
+3. Select up to 4 (fewer only if the candidate pool genuinely has fewer than 4 legitimate candidates — don't pad with weak options just to hit 4; Step 6 covers what to do with the unused slot(s) instead). For each, write a **brief** rationale (1-2 sentences, concrete — cite something from the actual issue, not a generic "this seems important") explaining why it's a reasonable next pick, and how it compares to the others if relevant.
 
 Skip to Step 6.
 
@@ -54,20 +55,24 @@ Before concluding there's nothing to work on:
    - **Still blocked on another open issue**: note the blocking issue's ID, title, and state plainly.
    - **Still blocked on a human action** (comment reads as needing the user): note what the user specifically needs to do, as stated in the comment — don't paraphrase it into something vaguer.
 4. If step 3 surfaced one or more now-unblocked issues, continue to Step 3's ranking using just those (skip re-running the cheap triage over the whole Blocked set — you already have what you need from the comment/relation read).
-5. If nothing is actually unblocked: **do not present 3 options** — there's nothing legitimate to choose from. Report plainly instead: a table of every Blocked issue with what specifically is blocking it (issue ID+title+state, or the human action needed), so the user knows exactly what to go unblock. This is a valid, useful stopping point, not a failure to route around.
+5. If nothing is actually unblocked: there's nothing legitimate to choose from. Identify the highest-priority Blocked issue and its specific next unblock action (the manual step, external dependency, or open issue it's waiting on). Then use `AskUserQuestion` with two options: walking through that unblock action now, and "Stop here for now" (nothing else is actionable right now) — and give the full table of every Blocked issue and what's blocking it in the text around the question, so the user has the complete picture before choosing. This is a valid, useful stopping point, not a failure to route around.
 
 ## Step 5 — (only reached via Step 4) present the reclassified candidates
 
 Same as Step 3.2-3.3, but explicitly note for each option that it was found sitting in Blocked with a since-resolved blocker — don't bury that fact, the user should know their tracker is stale here.
 
-## Step 6 — Present exactly 3 options and get the user's pick
+## Step 6 — Present up to 4 options and get the user's pick
 
-Use `AskUserQuestion` with the 3 ranked candidates as options (label = `<ID>: <short title>`, description = the brief rationale). The tool always offers an "Other" fallback automatically, so the user can reject all 3 without needing a 4th option from you.
+Use `AskUserQuestion` with the ranked candidates as options (label = `<ID>: <short title>`, description = the brief rationale). The tool always offers an "Other" fallback automatically, so the user can reject all of them without needing an extra one from you.
 
-Do not add editorializing beyond the per-option rationale — no "I'd go with the first one" unless explicitly asked. Three good options with honest tradeoffs is the deliverable; the choice is the user's.
+**If Step 3.3 (or Step 5) produced fewer than 4 candidates, add one final option to stop the session** — label something like "Stop here for now", description stating plainly that the pool came up short (e.g. "Only 2 legitimate candidates right now — nothing else is worth padding the list with"). This makes "there's nothing good to pick up right now" a first-class choice instead of relying on the user to notice the list is short or reach for the generic "Other" fallback themselves. Never add this option when the pool already has 4 real candidates — don't burn a slot on it when there's real work to show.
+
+Do not add editorializing beyond the per-option rationale — no "I'd go with the first one" unless explicitly asked. Up to four good options with honest tradeoffs (fewer plus the stop option, when the pool is thin) is the deliverable; the choice is the user's.
 
 ## Step 7 — Hand off
 
-Once the user picks one (from the 3, or names something else via Other), begin work on it per your project's normal issue-start process (a dedicated start-issue skill if you have one, or setting it In Progress and planning manually otherwise). If they picked an issue that Step 4 identified as reclassified-from-Blocked, mention that starting it will move it out of Blocked as part of setting it In Progress — no separate state-fix step needed.
+Once the user picks an issue (from the ranked options, or names something else via Other), begin work on it per your project's normal issue-start process (a dedicated start-issue skill if you have one, or setting it In Progress and planning manually otherwise). If they picked an issue that Step 4 identified as reclassified-from-Blocked, mention that starting it will move it out of Blocked as part of setting it In Progress — no separate state-fix step needed.
 
-If the user declines to pick anything (wants to keep browsing, or the Step 4 blocked-report was the actual answer they needed), stop here — don't force a selection.
+If the user picks the "Stop here for now" option, end the turn without starting any issue — this is a deliberate decision to end the session, not a decline-to-choose.
+
+If the user declines to pick anything else (wants to keep browsing, or the Step 4 blocked-report was the actual answer they needed), stop here — don't force a selection.

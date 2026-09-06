@@ -25,7 +25,7 @@ After install, skills are available namespaced: `/general-workflow:roast`, `/gen
 
 ### Optional integrations
 
-- `create-prd` and `research` post to Plane if the [Plane MCP server](https://github.com/makeplane/plane-mcp-server) is configured — falls back to chat output otherwise.
+- `create-prd` and `research` post to Plane if the fork-specific Plane MCP server is configured (see [plane-workflow's prerequisite](../plane-workflow/README.md#prerequisite-plane-mcp-server) - [vdaluz/plane-mcp-server](https://github.com/vdaluz/plane-mcp-server), not the official server), falling back to chat output otherwise.
 - `browser-verify` requires the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) configured — it doesn't work without it.
 - `stale-repos` is workstation-local (reads your local filesystem) — it can't run as a cloud/scheduled routine.
 

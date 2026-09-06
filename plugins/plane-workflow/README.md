@@ -4,11 +4,11 @@ Claude Code skills for [Plane](https://plane.so) project management — start is
 
 ## Prerequisite: Plane MCP server
 
-These skills use the [official Plane MCP server](https://github.com/makeplane/plane-mcp-server). Install and configure it before use ([`uv`](https://docs.astral.sh/uv/) required):
+These skills call flat, per-operation tools (`list_work_items`, `create_work_item`, and so on). That shape comes from [vdaluz/plane-mcp-server](https://github.com/vdaluz/plane-mcp-server), a fork of the official server - not the official [makeplane/plane-mcp-server](https://github.com/makeplane/plane-mcp-server), which as of 0.3 consolidates every work-item operation behind a single `workitem` tool with an `action` argument. The two aren't interchangeable: these skills won't work against the official server. Install the fork instead ([`uv`](https://docs.astral.sh/uv/) required):
 
 ```bash
-# Install the Plane MCP server
-claude mcp add plane -- uvx plane-mcp-server stdio
+# Install the Plane MCP server (fork with the flat tool surface these skills need)
+claude mcp add plane -- uvx --from git+https://github.com/vdaluz/plane-mcp-server@v0.2.11 plane-mcp-server stdio
 ```
 
 You'll need a Plane API key and your workspace slug. Get the key from **Plane → Settings → API tokens**. Set them as environment variables:
@@ -18,7 +18,7 @@ export PLANE_API_KEY=your_api_key
 export PLANE_WORKSPACE_SLUG=your-workspace-slug
 ```
 
-Or configure them in `~/.claude/settings.json` under `env`. For a self-hosted Plane instance, also set `PLANE_BASE_URL` (defaults to `https://api.plane.so`). Full reference: [developers.plane.so/dev-tools/mcp-server](https://developers.plane.so/dev-tools/mcp-server).
+Or configure them in `~/.claude/settings.json` under `env`. For a self-hosted Plane instance, also set `PLANE_BASE_URL` (defaults to `https://api.plane.so`). [developers.plane.so/dev-tools/mcp-server](https://developers.plane.so/dev-tools/mcp-server) documents the official server's consolidated tools, not this fork's flat ones - useful for API concepts, not for matching tool names.
 
 ## Install
 

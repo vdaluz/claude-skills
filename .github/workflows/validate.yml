@@ -61,6 +61,24 @@ jobs:
             exit 1
           fi
           echo "No tracker-ID leaks found."
+      - name: Verify README documents the fork when skills use its flat tool names
+        run: |
+          set -euo pipefail
+          # A plugin whose skills call mcp__plane__* flat tools depends on the
+          # vdaluz/plane-mcp-server fork, not the official server (see META-158).
+          # Scoped to each plugin's skills/ dir, not its README, so this check's
+          # own pattern text can never self-match.
+          mismatch=0
+          for plugin_dir in plugins/*/; do
+            plugin_dir="${plugin_dir%/}"
+            if [ -d "$plugin_dir/skills" ] && grep -rq "mcp__plane__" "$plugin_dir/skills"; then
+              if [ ! -f "$plugin_dir/README.md" ] || ! grep -q "github.com/vdaluz/plane-mcp-server" "$plugin_dir/README.md"; then
+                echo "::error::$plugin_dir/skills uses mcp__plane__* tools but $plugin_dir/README.md doesn't mention the vdaluz/plane-mcp-server fork"
+                mismatch=1
+              fi
+            fi
+          done
+          exit $mismatch
       - name: Verify SKILL.md name matches its directory
         run: |
           set -euo pipefail

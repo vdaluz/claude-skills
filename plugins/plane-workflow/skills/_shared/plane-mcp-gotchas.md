@@ -1,5 +1,10 @@
 # Plane MCP known tool bugs
 
+Applies to [vdaluz/plane-mcp-server](https://github.com/vdaluz/plane-mcp-server) (see the
+plugin's [prerequisite section](../../README.md#prerequisite-plane-mcp-server)), the fork these
+skills target - the PQL rejection below is the Plane backend edition's own behavior, not
+specific to any one MCP server, but was observed running against this fork.
+
 Shared by `pick-next-issue`, `reprioritize-backlog`, and `whats-next`. Read this once; each
 skill only states what's specific to its own step.
 

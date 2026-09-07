@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 Parse a PRD and create a structured set of Plane issues from it.
 
-Arguments: PRD file path (or omit to search the current project for `docs/prd.md`), Plane project identifier (e.g. BLG).
+Arguments: PRD file path (or omit to search the current project for `docs/prd.md`), Plane project identifier (e.g. PROJ).
 
 ## Issue granularity rules
 
@@ -34,7 +34,7 @@ Do NOT create one issue per functional requirement — that's too granular. Inst
 Each feature-area issue description should include:
 - One sentence summarising the feature.
 - A checklist of the relevant FRs (e.g. `- [ ] FR-04: scan src/content/blog/*.md ...`).
-- Any spike blockers called out in the PRD (e.g. "Blocked by BLG-SPIKE-02").
+- Any spike blockers called out in the PRD (e.g. "Blocked by PROJ-SPIKE-02").
 
 ## Rules
 

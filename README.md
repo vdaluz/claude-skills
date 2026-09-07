@@ -44,7 +44,7 @@ Skills for [Plane](https://plane.so) project management.
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
 | `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
 | `whats-next` | Show what's next for a Plane project across In Progress/Todo/Backlog/Blocked |
-| `pick-next-issue` | Recommend 3 ranked next-issue candidates instead of a raw list |
+| `pick-next-issue` | Recommend up to 4 ranked next-issue candidates instead of a raw list |
 | `reprioritize-backlog` | Reorder a Backlog by dependency + urgency, applied only after explicit approval |
 
 ## Manual install (no marketplace)
@@ -55,7 +55,7 @@ Copy any skill directory into `~/.claude/skills/`:
 cp -r plugins/general-workflow/skills/roast ~/.claude/skills/
 ```
 
-Then invoke as `/read-surface` (no namespace prefix). Some skills have extra manual-install requirements - plane-workflow's skills need `skills/_shared` copied alongside them, and two general-workflow skills are marketplace-only. See each plugin's own README for the details.
+Then invoke as `/roast` (no namespace prefix). Some skills have extra manual-install requirements - plane-workflow's skills need `skills/_shared` copied alongside them. See each plugin's own README for the details.
 
 ## Contributing
 

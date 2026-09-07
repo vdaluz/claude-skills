@@ -1,7 +1,7 @@
 ---
 name: stale-repos
 description: Scan the git repos in a root directory's immediate subdirectories for stale branches/worktrees, report by verdict, offer safe opt-in cleanup.
-argument-hint: "[--fetch] [--age-days N] [--root PATH] [--prune]"
+argument-hint: "[--fetch] [--age-days N] [--root PATH] [--prune] [PATH ...]"
 effort: low
 disable-model-invocation: true
 ---
@@ -23,7 +23,7 @@ A deterministic Python scanner (`scan.py`, bundled in this skill dir) does all d
 Run the bundled scanner. Default is JSON; use `--text` for a quick human view.
 
 ```
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/stale-repos/scan.py
+python3 ${CLAUDE_SKILL_DIR}/scan.py
 ```
 
 Flags to pass through from the user's request:

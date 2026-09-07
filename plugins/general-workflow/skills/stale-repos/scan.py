@@ -52,12 +52,30 @@ def discover(root, explicit):
     root = os.path.expanduser(root)
     if not os.path.isdir(root):
         sys.exit(f"error: root path {root!r} does not exist (pass --root to point at your repos)")
-    out = []
+    candidates = []
     for name in sorted(os.listdir(root)):
         p = os.path.join(root, name)
         if os.path.isdir(p) and is_repo(p):
-            out.append(p)
-    return out
+            candidates.append(p)
+
+    # A linked worktree can live as a sibling directory under root (e.g. repo + repo-wt)
+    # rather than inside its main repo. Its `.git` is a file, not a directory, but
+    # is_repo() above accepts either, so discover() would otherwise scan it as a second
+    # repo - branches then get two conflicting verdicts and prune candidates list twice.
+    # `git rev-parse --git-dir` equals `--git-common-dir` only for the main checkout, so
+    # dedupe on common-dir and prefer the main checkout when both are under root.
+    by_common_dir = {}
+    for p in candidates:
+        git_dir = sh(["git", "-C", p, "rev-parse", "--git-dir"])
+        common_dir = sh(["git", "-C", p, "rev-parse", "--git-common-dir"])
+        # realpath, not abspath: git reports a worktree's common-dir fully resolved,
+        # while a locally-joined relative ".git" isn't - on macOS /tmp is a symlink to
+        # /private/tmp, so the two would never match without resolving both the same way.
+        key = os.path.realpath(os.path.join(p, common_dir)) if common_dir else p
+        is_main = git_dir == common_dir
+        if is_main or key not in by_common_dir:
+            by_common_dir[key] = p
+    return list(by_common_dir.values())
 
 
 def local_default_branch(repo):

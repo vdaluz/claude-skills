@@ -38,7 +38,7 @@ Steps:
    Wait for user "go" before touching files or running commands.
 
 5. Once user approves the plan:
-   - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment and remind the user to close out the spike (mark it Done, and if your workflow converts findings into follow-up issues, do that next) and then run `/spike-to-issues` to convert findings into implementation issues.
+   - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment, then tell the user to close out the spike (mark it Done, and if your workflow converts findings into follow-up issues, do that next) and run `/spike-to-issues` themselves to convert findings into implementation issues.
    - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 
      In all cases, post the plan as a Plane comment, then begin making changes.

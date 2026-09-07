@@ -19,6 +19,13 @@ from datetime import datetime
 
 SETTINGS_PATH = os.path.join(os.path.expanduser('~'), '.claude', 'settings.json')
 DOMAIN_RE = re.compile(r'^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$')
+# Matches the RFC-1918/loopback exclusion the parent skill's step 2 already applies to
+# candidates it surfaces - this script is a second entry point (a user can run `add`
+# directly) that needs the same exclusion, since DOMAIN_RE's hostname syntax check
+# doesn't distinguish a dotted IP literal from a real domain.
+PRIVATE_IPV4_RE = re.compile(
+    r'^(127\.0\.0\.1|10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})$'
+)
 
 
 def load():
@@ -46,13 +53,19 @@ def cmd_list():
 def cmd_add(domains):
     settings = load()
     allow = settings.setdefault('permissions', {}).setdefault('allow', [])
+    if not isinstance(allow, list):
+        sys.exit(f'Error: permissions.allow in {SETTINGS_PATH} is not a list '
+                  f'({type(allow).__name__}) - fix that by hand before running add.')
 
     valid_domains = []
     for domain in domains:
-        if DOMAIN_RE.match(domain):
-            valid_domains.append(domain)
-        else:
+        if not DOMAIN_RE.match(domain):
             print(f'Skipping invalid domain: {domain!r} (must be a bare hostname, no scheme/path/port)')
+        elif PRIVATE_IPV4_RE.match(domain):
+            print(f'Skipping private/internal address: {domain!r} '
+                  f'(RFC-1918/loopback - use a hostname if you need an internal service allowed)')
+        else:
+            valid_domains.append(domain)
 
     if not valid_domains:
         sys.exit('No valid domains to add.')

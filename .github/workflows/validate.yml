@@ -31,7 +31,7 @@ jobs:
           for plugin in plugins/*/; do
             claude plugin validate "$plugin"
           done
-      - name: Verify CLAUDE_PLUGIN_ROOT script references exist
+      - name: Verify CLAUDE_PLUGIN_ROOT and CLAUDE_SKILL_DIR script references exist
         run: |
           set -euo pipefail
           missing=0
@@ -46,6 +46,20 @@ jobs:
               fi
             done < <(grep -rhoE '\$\{?CLAUDE_PLUGIN_ROOT\}?/[A-Za-z0-9_./-]+' "$plugin_dir" | sort -u)
           done
+          # ${CLAUDE_SKILL_DIR} resolves relative to the individual skill's own
+          # directory, not the plugin root, so this loop is per-SKILL.md rather
+          # than per-plugin.
+          while IFS= read -r skill_file; do
+            skill_dir="$(dirname "$skill_file")"
+            while IFS= read -r ref; do
+              rel="${ref#\$\{CLAUDE_SKILL_DIR\}/}"
+              rel="${rel#\$CLAUDE_SKILL_DIR/}"
+              if [ ! -f "$skill_dir/$rel" ]; then
+                echo "::error::$skill_file references missing script: $rel"
+                missing=1
+              fi
+            done < <(grep -hoE '\$\{?CLAUDE_SKILL_DIR\}?/[A-Za-z0-9_./-]+' "$skill_file" | sort -u)
+          done < <(find plugins -name SKILL.md)
           exit $missing
       - name: Check for private-tracker-ID leaks
         run: |
@@ -56,7 +70,7 @@ jobs:
           # NOTE: \b is not a POSIX ERE word boundary - `grep -E '\b...'` silently
           # matches nothing under git grep's ERE engine. Explicit non-alnum/anchor
           # boundaries instead, confirmed against a planted match before landing.
-          if git grep -InE '(^|[^A-Za-z])(LAB|VDA|WQ1K|BLG|DP|DRR|GRNH|LUCHA|FAIR|SHKZ|AST|META|FTB|SOM|PRSP|MKT|IDEA|IPS)-[0-9]+([^A-Za-z0-9]|$)' -- . ':(exclude).github/'; then
+          if git grep -InE '(^|[^A-Za-z])(LAB|VDA|WQ1K|BLG|DP|DRR|GRNH|LUCHA|FAIR|SHKZ|AST|META|FTB|SOM|PRSP|MKT|IDEA|IPS)-[A-Z0-9-]*[0-9]+([^A-Za-z0-9]|$)' -- . ':(exclude).github/'; then
             echo "::error::Found a private tracker ID leaked into the public marketplace (see matches above). Use a generic placeholder like PROJ-123 instead."
             exit 1
           fi
@@ -100,27 +114,24 @@ jobs:
         run: |
           set -euo pipefail
           mismatch=0
-          on_disk_root="$(find plugins/general-workflow/skills plugins/plane-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-          on_disk_gw="$(find plugins/general-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-          on_disk_pw="$(find plugins/plane-workflow/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
+          on_disk_root="$(find plugins/*/skills -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
           in_readme_root="$(grep -ohE '^\| `[a-z0-9-]+` \|' README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
-          in_readme_gw="$(grep -ohE '^\| `[a-z0-9-]+` \|' plugins/general-workflow/README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
-          in_readme_pw="$(grep -ohE '^\| `[a-z0-9-]+` \|' plugins/plane-workflow/README.md | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
           if [ "$on_disk_root" != "$in_readme_root" ]; then
             echo "::error::README.md skill table doesn't match plugins/*/skills on disk"
             diff <(echo "$on_disk_root") <(echo "$in_readme_root") || true
             mismatch=1
           fi
-          if [ "$on_disk_gw" != "$in_readme_gw" ]; then
-            echo "::error::plugins/general-workflow/README.md skill table doesn't match its skills/ dir"
-            diff <(echo "$on_disk_gw") <(echo "$in_readme_gw") || true
-            mismatch=1
-          fi
-          if [ "$on_disk_pw" != "$in_readme_pw" ]; then
-            echo "::error::plugins/plane-workflow/README.md skill table doesn't match its skills/ dir"
-            diff <(echo "$on_disk_pw") <(echo "$in_readme_pw") || true
-            mismatch=1
-          fi
+          for plugin_dir in plugins/*/; do
+            plugin_dir="${plugin_dir%/}"
+            [ -d "$plugin_dir/skills" ] || continue
+            on_disk="$(find "$plugin_dir/skills" -maxdepth 2 -mindepth 2 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
+            in_readme="$(grep -ohE '^\| `[a-z0-9-]+` \|' "$plugin_dir/README.md" | sed -E 's/^\| `([a-z0-9-]+)` \|/\1/' | sort -u)"
+            if [ "$on_disk" != "$in_readme" ]; then
+              echo "::error::$plugin_dir/README.md skill table doesn't match its skills/ dir"
+              diff <(echo "$on_disk") <(echo "$in_readme") || true
+              mismatch=1
+            fi
+          done
           exit $mismatch
       - name: Check for tracked .DS_Store files
         run: |

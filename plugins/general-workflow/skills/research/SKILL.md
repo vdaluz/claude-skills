@@ -21,7 +21,7 @@ Before any searching, shortlisting, evaluation, or recommendation, make the user
 
 **1. Scope and topic**
 
-Use provided issue ID, or detect from recent conversation (MCP calls, issue mentions). Derive topic from issue name/description if not given. **A detected (not user-provided) issue ID is a guess about the write target, not a confirmed one** — before step 5 posts anything to it, confirm it's the right issue (state it plainly, e.g. "posting findings to PROJ-123 — say if that's wrong") rather than assuming a detected ID is correct.
+Use provided issue ID, or detect from recent conversation (MCP calls, issue mentions). Derive topic from issue name/description if not given. **A detected (not user-provided) issue ID is a guess about the write target, not a confirmed one.** Before step 5 posts anything to it, confirm it's the right issue with `AskUserQuestion` (e.g. "Post findings to PROJ-123?") and wait for an explicit reply. Stating the guess plainly and posting in the same turn is not confirmation - nothing stops the write if the guess is wrong.
 
 **2. Research in this order**
 

@@ -1,7 +1,7 @@
 ---
 name: fewer-fetch-prompts
 description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts.
-allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/scan_domains.py) Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py *)
+allowed-tools: Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/scan_domains.py) Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/manage_allowlist.py *)
 disable-model-invocation: true
 effort: low
 ---
@@ -21,7 +21,7 @@ Trigger: `/fewer-fetch-prompts`
 ### 1. Scan transcripts for WebFetch domains
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/scan_domains.py
+python3 ${CLAUDE_SKILL_DIR}/scripts/scan_domains.py
 ```
 
 Parses actual WebFetch tool_use calls from JSONL transcripts — not just any URL mentioned in text — so it reflects domains Claude actually fetched. If that yields few results, the script automatically falls back to a broader raw-URL scan and reports which mode it used.
@@ -53,7 +53,7 @@ Remove from candidates without asking:
 ### 3. Read existing allowlist
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py list
+python3 ${CLAUDE_SKILL_DIR}/scripts/manage_allowlist.py list
 ```
 
 Remove any candidates already in the allowlist.
@@ -78,7 +78,7 @@ Ask: "Add all Tier 1 and Tier 2? Which Tier 3 domains do you want to include?"
 Once user confirms the list:
 
 ```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-fetch-prompts/scripts/manage_allowlist.py add <domain1> <domain2> ...
+python3 ${CLAUDE_SKILL_DIR}/scripts/manage_allowlist.py add <domain1> <domain2> ...
 ```
 
 This backs up `settings.json` (timestamped, alongside the original) before rewriting it, adds the approved domains, writes the file, then re-reads and prints the full allowlist to confirm — steps 5 and 6 in one call.

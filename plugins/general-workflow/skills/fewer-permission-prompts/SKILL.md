@@ -1,7 +1,7 @@
 ---
 name: fewer-permission-prompts
 description: Scan recent session transcripts for repeated read-only tool calls and propose an allowlist to reduce permission prompts.
-allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-permission-prompts/scripts/scan_tool_calls.py)
+allowed-tools: Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/scan_tool_calls.py)
 disable-model-invocation: true
 ---
 
@@ -18,7 +18,7 @@ Then, add these to the appropriate settings file (see Step 7).
 1. **Run the bundled scanner** to get raw tool-call frequencies across the user's recent transcripts (not just the current project):
 
    ```
-   python3 ${CLAUDE_PLUGIN_ROOT}/skills/fewer-permission-prompts/scripts/scan_tool_calls.py
+   python3 ${CLAUDE_SKILL_DIR}/scripts/scan_tool_calls.py
    ```
 
    It scans the 50 most-recently-modified `~/.claude/projects/**/*.jsonl` files, and prints `count  pattern` lines for every Bash command (as both a one-token form like `git` and a two-token form like `git status`) and every MCP tool name it saw in a `tool_use` block. This step is purely mechanical extraction - it does not judge which form is the meaningful pattern for a given command (some commands have real subcommands; for others the second token is just an argument, e.g. a filename), and it does not judge safety at all. That judgment is yours, in steps 2-3 below.
@@ -62,7 +62,7 @@ Then, add these to the appropriate settings file (see Step 7).
 
    | # | Pattern | Count | Notes |
    |---|---------|-------|-------|
-   | 1 | `Bash(git status *)` | 142 | repo status checks |
+   | 1 | `Bash(kubectl get *)` | 142 | cluster resource checks |
    | 2 | `Bash(gh pr view *)` | 87 | PR inspection |
    | 3 | `mcp__slack__slack_read_thread` | 54 | Slack thread reads |
 

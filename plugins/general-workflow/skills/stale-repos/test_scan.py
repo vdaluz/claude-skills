@@ -154,12 +154,51 @@ def test_default_branch_multi_segment_ref():
     print("PASS: test_default_branch_multi_segment_ref")
 
 
+def test_sibling_worktree_scanned_once_main_sorts_first():
+    """A linked worktree created as a sibling directory under --root (not inside the main
+    repo, e.g. root/repo + root/repo-wt) has its own .git file pointing back at the main
+    repo's .git/worktrees/<name> - discover() must not scan it as a second repo."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = os.path.join(tmp, "root")
+        repo = init_repo(os.path.join(root, "repo"))
+        commit(repo, "initial")
+        wt_path = os.path.join(root, "repo-wt")
+        git(repo, "worktree", "add", "-q", "-b", "side", wt_path, "main")
+
+        data = scan_json(root)
+        matches = [r for r in data["repos"] if r["name"] in ("repo", "repo-wt")]
+        assert len(matches) == 1, f"expected one entry for repo + its sibling worktree, got {[m['name'] for m in matches]}"
+        assert matches[0]["name"] == "repo", f"expected the main checkout to win, got {matches[0]['name']!r}"
+
+    print("PASS: test_sibling_worktree_scanned_once_main_sorts_first")
+
+
+def test_sibling_worktree_scanned_once_worktree_sorts_first():
+    """Same bug, but the worktree directory name sorts alphabetically before the main
+    repo's - confirms the dedupe doesn't depend on listdir() ordering."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = os.path.join(tmp, "root")
+        repo = init_repo(os.path.join(root, "zzz-repo"))
+        commit(repo, "initial")
+        wt_path = os.path.join(root, "aaa-repo-wt")
+        git(repo, "worktree", "add", "-q", "-b", "side", wt_path, "main")
+
+        data = scan_json(root)
+        matches = [r for r in data["repos"] if r["name"] in ("zzz-repo", "aaa-repo-wt")]
+        assert len(matches) == 1, f"expected one entry, got {[m['name'] for m in matches]}"
+        assert matches[0]["name"] == "zzz-repo", f"expected the main checkout to win regardless of sort order, got {matches[0]['name']!r}"
+
+    print("PASS: test_sibling_worktree_scanned_once_worktree_sorts_first")
+
+
 if __name__ == "__main__":
     tests = [
         test_renamed_remote_gone_ahead,
         test_missing_root_clean_error,
         test_prunable_worktree,
         test_default_branch_multi_segment_ref,
+        test_sibling_worktree_scanned_once_main_sorts_first,
+        test_sibling_worktree_scanned_once_worktree_sorts_first,
     ]
     failures = 0
     for t in tests:

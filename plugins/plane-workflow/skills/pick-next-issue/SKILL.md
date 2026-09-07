@@ -1,6 +1,7 @@
 ---
 name: pick-next-issue
 description: Recommend what to work on next in a Plane project, presenting up to 4 ranked candidates with brief rationale instead of silently picking one. Use when the user asks what to pick up next, wants a recommendation, or runs /pick-next-issue.
+argument-hint: "[project] [--include-todo-only]"
 ---
 
 Recommend what to work on next in a Plane project. This is the opinionated counterpart to a raw "what's next" listing (see the `whats-next` skill if you have it installed, which prints candidates with zero commentary) — this skill reads the candidates, ranks them, and presents up to 4 with a one-line reason each (fewer plus an explicit option to stop the session, if the pool is thin), then lets the user choose. Works on any Plane project — no per-project hardcoding required in the core logic.

@@ -1,6 +1,7 @@
 ---
 name: start-issue
 description: Start work on a Plane issue, fetching context, setting In Progress, and producing a research-backed plan. Use when the user explicitly asks to start or begin work on a specific issue (e.g. "start issue X", "begin work on PROJ-123").
+argument-hint: "[issue-id] [what-were-doing-today]"
 ---
 
 Start work on a Plane issue.
@@ -10,7 +11,7 @@ Arguments: issue ID (e.g. PROJ-123) and optionally what we're doing today (1 sen
 > **Issue specs are suggestions, not requirements.** Before including any file path, tool, or approach from the issue description in the plan, verify it against your project's actual conventions. Example: a script meant to run on a remote host might belong in an existing automation framework (an Ansible role, a deploy script) rather than a loose one-off; a new service might belong in a tracked config file rather than hardcoded inline. Flag mismatches against what the project actually does and propose the correct approach.
 
 Steps:
-1. If user said "new issue": create it via `mcp__plane__create_work_item` (get the project ID from a cached reference file if you keep one, or via `mcp__plane__list_projects` otherwise; set `name`, `description_html` with HTML tags — Plane silently drops plain text; `priority` is mandatory, infer it per `create-issue`'s step 4 if the user didn't state one). Skip to step 3 after creation. Otherwise, confirm issue ID — if missing, ask.
+1. If user said "new issue": run `create-issue` with the given project/title/description/labels to create it (this delegates state/priority/label resolution to that skill instead of re-implementing it here). Skip to step 3 after creation. Otherwise, confirm issue ID — if missing, ask.
 
 2. Fetch issue via `mcp__plane__retrieve_work_item_by_identifier`. **ALWAYS also read the issue's own comments** via `mcp__plane__list_work_item_comments` — never the description alone. Comments routinely carry prior-session notes, decisions, status changes, and blockers ("scan already done", "blocked on X") that the description does not. Check if it is a spike (title starts with "Spike:" or has a "spike" label). Summarize in 3–6 bullets: goal, current status (incl. anything from comments), constraints, open questions.
 
@@ -38,7 +39,7 @@ Steps:
    Wait for user "go" before touching files or running commands.
 
 5. Once user approves the plan:
-   - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment, then tell the user to close out the spike (mark it Done, and if your workflow converts findings into follow-up issues, do that next) and run `/spike-to-issues` themselves to convert findings into implementation issues.
+   - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment, then tell the user to mark the spike Done and run `/spike-to-issues` themselves to convert findings into implementation issues.
    - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 
      In all cases, post the plan as a Plane comment, then begin making changes.

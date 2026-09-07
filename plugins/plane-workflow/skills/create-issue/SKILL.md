@@ -1,6 +1,7 @@
 ---
 name: create-issue
 description: Create a new Plane issue in the correct project with the correct state and any required labels. Use when the user asks to "create an issue", "file a ticket", or "add this to the backlog".
+argument-hint: "[project] [title] [description] [labels]"
 effort: low
 ---
 
@@ -18,17 +19,17 @@ Arguments: project identifier (e.g. LAB, WQ1K), title, description, labels (opti
    - `high`: blocks other work, a hard deadline, or a confirmed bug affecting real usage
    - `medium`: normal feature work, non-blocking bugs, most maintenance - **default when no signal points elsewhere**
    - `low`: cosmetic, nice-to-have, exploratory/research spikes with no urgency
-5. Create issue via `mcp__plane__create_work_item` with:
-   - `name`: the title
-   - `description_html`: body wrapped in HTML tags (e.g. `<p>…</p>`, `<ul><li>…</li></ul>`) — Plane silently drops plain text
-   - `state`: Backlog UUID
-   - `priority`: from step 4
-   - `labels`: any requested labels
-6. Apply any project-specific label rules your workspace has configured. For example:
+5. Resolve the full label set **before** creating the issue: any caller-requested labels, plus any project-specific label rules your workspace has configured. For example:
    | Project | Required labels |
    |---------|----------------|
    | LAB (example) | `v3` |
    | Others | as specified by caller |
+6. Create issue via `mcp__plane__create_work_item` with:
+   - `name`: the title
+   - `description_html`: body wrapped in HTML tags (e.g. `<p>…</p>`, `<ul><li>…</li></ul>`) — Plane silently drops plain text
+   - `state`: Backlog UUID
+   - `priority`: from step 4
+   - `labels`: the full set from step 5
 7. Output issue ID, the priority that was set (flag it if inferred rather than caller-stated), and a short summary of what was created.
 
 ## Notes

@@ -1,6 +1,7 @@
 ---
 name: whats-next
 description: Show what's next for a Plane project across In Progress, Todo, Backlog, and Blocked. Use when the user asks what's next, what to work on, or runs /whats-next.
+argument-hint: "[project] [--include-labels=name,...] [--exclude-labels=name,...] [--sort-by=field] [--sort-order=asc|desc] [--nulls=first|last] [--include-content]"
 effort: low
 ---
 
@@ -10,8 +11,8 @@ Arguments: project identifier — optional; auto-detected from cwd if omitted, o
 
 | Flag | Effect | Default |
 |---|---|---|
-| `--include-labels=<uuid,...>` | Keep only issues with at least one of these label UUIDs | (none — keep all) |
-| `--exclude-labels=<uuid,...>` | Drop any issue with at least one of these label UUIDs | (none) |
+| `--include-labels=<name,...>` | Keep only issues with at least one of these label names (case-insensitive) | (none — keep all) |
+| `--exclude-labels=<name,...>` | Drop any issue with at least one of these label names (case-insensitive) | (none) |
 | `--sort-by=priority\|target_date\|created_at\|updated_at` | Sort key within each section | `priority` |
 | `--sort-order=asc\|desc` | Sort direction | `asc` |
 | `--nulls=first\|last` | Null placement for date sorts | `last` |
@@ -41,7 +42,7 @@ Partition by state name/group:
 - **Backlog** (group `backlog`)
 - **Blocked** (a state literally named "Blocked", if the project has one)
 
-Apply `--include-labels`/`--exclude-labels` and the default content filter (Step 1 above, unless `--include-content`) to every section. Sort each section by `--sort-by`/`--sort-order`/`--nulls`:
+Apply `--include-labels`/`--exclude-labels` (matching case-insensitively against each issue's already-expanded `labels[].name` - no separate `mcp__plane__list_labels` call needed) and the default content filter (Default content filter above, unless `--include-content`) to every section. Sort each section by `--sort-by`/`--sort-order`/`--nulls`:
 
 - **`--sort-by=priority`** (the default): rank by urgency, not alphabetically or by the raw string value. Map `urgent`→0, `high`→1, `medium`→2, `low`→3, `none`/unset→4, then sort by that rank. `asc` (the default) means urgent-first; `desc` means none/low-first.
 - **`--sort-by=target_date|created_at|updated_at`**: sort by that field's actual value, `asc`/`desc` as given, with `--nulls` (default `last`) controlling where missing values land.

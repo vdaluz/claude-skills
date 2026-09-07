@@ -1,6 +1,7 @@
 ---
 name: spike-to-issues
 description: Convert a completed spike's findings into concrete implementation issues in Plane. Requires the spike to be Done or have findings posted.
+argument-hint: "[spike-issue-id]"
 disable-model-invocation: true
 ---
 

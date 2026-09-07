@@ -1,6 +1,7 @@
 ---
 name: prd-to-issues
 description: Parse a PRD and create Plane issues from it, one per spike and one per feature area.
+argument-hint: "[prd-file-path] [project]"
 disable-model-invocation: true
 ---
 
@@ -27,14 +28,14 @@ Do NOT create one issue per functional requirement — that's too granular. Inst
 5. Plan the full issue list before creating anything. Output it to the user as a numbered list (title + one-line scope summary) and wait for confirmation or edits.
 6. After confirmation, create each issue by calling `mcp__plane__create_work_item` directly with the project UUID and Backlog state UUID already resolved in steps 2-3 - apply **create-issue**'s step 4 priority-inference rules per issue rather than re-invoking that skill, which would re-resolve the same UUIDs on every call. For spikes, apply the spike label from step 4. For feature-area issues, include the relevant FR numbers in the description.
 7. Create issues in this order: setup first, spikes second (they're often blockers), feature areas last.
-8. After all issues are created, output a summary table: issue ID, title, and any blocker relationships noted in the PRD.
+8. After all issues are created, output a summary table: issue ID, title, and any blocker text noted in the PRD. This skill never calls `mcp__plane__create_work_item_relation` - a blocker is a description-text reference to a real issue ID (see the format section below), not a formal Plane relation.
 
 ## Description format for feature-area issues
 
 Each feature-area issue description should include:
 - One sentence summarising the feature.
 - A checklist of the relevant FRs (e.g. `- [ ] FR-04: scan src/content/blog/*.md ...`).
-- Any spike blockers called out in the PRD (e.g. "Blocked by PROJ-SPIKE-02").
+- Any spike blockers called out in the PRD (e.g. "Blocked by PROJ-12", using the spike's real issue ID - spikes are created before feature areas in step 7, so the ID exists by then).
 
 ## Rules
 

@@ -1,6 +1,7 @@
 ---
 name: continue-issue
 description: Resume work on a Plane issue from a previous session by rebuilding context from Plane comments and codebase state, not chat history. Use when the user asks to "continue issue X", "pick this back up", or resumes a session on a previously-started issue.
+argument-hint: "[issue-id] [what-to-do-next]"
 ---
 
 Resume work on a Plane issue from a previous session.

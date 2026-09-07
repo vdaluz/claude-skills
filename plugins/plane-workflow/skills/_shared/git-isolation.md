@@ -53,7 +53,7 @@ fails the push and leaves local `main` diverged from `origin/main` (recover with
 origin/main:main -f`). Neither fetch touches HEAD or the working tree, so this is safe regardless
 of whose branch is currently checked out. Do not run `git fetch . <branch>:main` while HEAD is on
 `main` itself: git refuses outright (`fatal: refusing to fetch into branch 'refs/heads/main'
-checked out at ...`), that's the on-`main` case above, not this one.
+checked out at ...`). That's the on-`main` case above, not this one.
 
 If main moved since you branched, each path fails at a different point. Rebase and retry:
 
@@ -64,22 +64,22 @@ If main moved since you branched, each path fails at a different point. Rebase a
   main` directly in the primary is a no-op here, since HEAD there is already `main`). If `<branch>`
   is a plain branch and not checked out anywhere, rebase it from a scratch worktree instead of
   checking it out in the primary (`git worktree add <tmp-path> <branch>`, rebase there, `git
-  worktree remove <tmp-path>`), checking out `<branch>` directly in a shared primary is the same
+  worktree remove <tmp-path>`). Checking out `<branch>` directly in a shared primary is the same
   HEAD-hijack hazard this section opened with, just moving HEAD the other direction.
 - **Off-`main` path:** the `git fetch . <branch>:main` step itself refuses (non-fast-forward).
   Rebase `<branch>` onto `origin/main` in place (`git fetch origin && git rebase origin/main`),
   then retry the off-`main` sequence above. A rebase rewrites the working tree of the checkout it
-  runs in, if another session might be active in this same checkout, do the rebase from a worktree
-  instead, for the same shared-checkout reason, just landing on the working-tree contents instead
-  of HEAD.
+  runs in. If another session might be active in this same checkout, do the rebase from a worktree
+  instead: same shared-checkout hazard, landing on the working tree instead of HEAD.
 
 Then clean up:
 - Worktree: `git worktree remove <path>` (add `--force` only if it refuses over the now-merged
   branch). Confirm with `git worktree list` that it's gone. Never `rm -rf` a worktree directory
-  directly, that deletes the files but leaves git's own `.git/worktrees/<name>` registration
+  directly: that deletes the files but leaves git's own `.git/worktrees/<name>` registration
   dangling. `git worktree remove` is what actually deregisters it.
-- Remote branch: `git push origin --delete <branch>`, then `git fetch --prune`, safe regardless of
-  what's checked out. If the remote branch is already gone (GitHub auto-deleted it), skip this step.
+- Remote branch: `git push origin --delete <branch>`, then `git fetch --prune`. Both are safe
+  regardless of what's checked out. If the remote branch is already gone (GitHub auto-deleted it),
+  skip this step.
 - Local branch: `git branch -d <branch>` (`-D` if rebased) only if `<branch>` is not the branch
   currently checked out in this checkout (check with `git branch --show-current`). Deleting the
   checked-out branch always fails (`error: cannot delete branch '<branch>' used by worktree at
@@ -99,7 +99,7 @@ Then clean up:
 - Confirm: `git branch -a` shows `main`/`origin/main` plus, in the plain-branch case, the
   already-merged local branch left behind above. That's expected, not a sign cleanup failed.
 
-Skip all of the above only in the rare case you worked directly on `main`.
+Skip all of the above if you worked directly on `main`.
 
 ## Encrypted or binary config merge conflicts
 

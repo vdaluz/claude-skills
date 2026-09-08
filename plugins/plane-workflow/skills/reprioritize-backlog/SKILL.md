@@ -11,9 +11,7 @@ Arguments: project identifier — optional; auto-detected from cwd if omitted, o
 
 ## Step 1 — Resolve project and scope
 
-If you keep a cwd-to-project shortcut table, try it first. Otherwise ask which project, or resolve it via `mcp__plane__list_projects`.
-
-Get the project ID and the Backlog (and Todo, if `--include-todo`) state UUIDs — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise.
+Resolve the project and its Backlog (and Todo, if `--include-todo`) state UUIDs per `_shared/plane-project-resolve.md`.
 
 If your project uses a label or title convention to separate content backlog (blog drafts, dev logs, etc.) from actionable engineering work — the same one you'd use to filter a "what's next" listing — apply it here too, so content-backlog issues don't get mixed into an engineering reprioritization pass. Projects without that kind of convention: no filter, include everything.
 

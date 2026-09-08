@@ -28,9 +28,7 @@ When issues are excluded this way, do not silently drop them from the user's men
 
 ## Step 1 — Resolve project
 
-If you keep a cwd-to-project shortcut table, try it first. Otherwise ask which project, or resolve it via `mcp__plane__list_projects`.
-
-Get the project ID and state UUIDs (In Progress, Todo, Backlog, Blocked) — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise.
+Resolve the project and its state UUIDs (In Progress, Todo, Backlog, Blocked) per `_shared/plane-project-resolve.md`.
 
 ## Step 2 — Fetch and partition issues
 

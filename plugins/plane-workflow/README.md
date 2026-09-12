@@ -8,7 +8,7 @@ These skills call flat, per-operation tools (`list_work_items`, `create_work_ite
 
 ```bash
 # Install the Plane MCP server (fork with the flat tool surface these skills need)
-claude mcp add plane -- uvx --from git+https://github.com/vdaluz/plane-mcp-server@v0.2.11 plane-mcp-server stdio
+claude mcp add plane -- uvx --from git+https://github.com/vdaluz/plane-mcp-server@v0.2.12 plane-mcp-server stdio
 ```
 
 You'll need a Plane API key and your workspace slug. Get the key from **Plane → Settings → API tokens**. Set them as environment variables:

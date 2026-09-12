@@ -1,6 +1,6 @@
 # general-workflow
 
-Reusable Claude Code skills for planning, research, code review, and PRD writing. Core skills need no external tools - see Optional integrations below for the two that do.
+Reusable Claude Code skills for planning, research, code review, and PRD writing. Core skills need no external tools - see Optional integrations below for the three that do.
 
 ## Install
 

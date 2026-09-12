@@ -28,7 +28,8 @@ When issues are excluded this way, do not silently drop them from the user's men
 
 ## Step 1 — Resolve project
 
-Resolve the project and its state UUIDs (In Progress, Todo, Backlog, Blocked) per `_shared/plane-project-resolve.md`.
+Resolve the project and its state UUIDs (In Progress, Todo, Backlog, Blocked) per
+`${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md`.
 
 ## Step 2 — Fetch and partition issues
 
@@ -42,7 +43,7 @@ Partition by state name/group:
 
 Apply `--include-labels`/`--exclude-labels` (matching case-insensitively against each issue's already-expanded `labels[].name` - no separate `mcp__plane__list_labels` call needed) and the default content filter (Default content filter above, unless `--include-content`) to every section. Sort each section by `--sort-by`/`--sort-order`/`--nulls`:
 
-- **`--sort-by=priority`** (the default): rank by urgency, not alphabetically or by the raw string value. Map `urgent`→0, `high`→1, `medium`→2, `low`→3, `none`/unset→4, then sort by that rank. `asc` (the default) means urgent-first; `desc` means none/low-first.
+- **`--sort-by=priority`** (the default): rank by urgency, not alphabetically or by the raw string value. Use the priority weight map in `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md` (`urgent`=4 … `none`/unset=0) and sort by that weight **descending** for `asc` (the default, meaning urgent-first); `desc` sorts by weight ascending (none/low-first).
 - **`--sort-by=target_date|created_at|updated_at`**: sort by that field's actual value, `asc`/`desc` as given, with `--nulls` (default `last`) controlling where missing values land.
 
 ## Step 3 — Display

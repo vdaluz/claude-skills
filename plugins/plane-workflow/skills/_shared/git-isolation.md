@@ -51,26 +51,41 @@ Sync `main` from the remote first. Skipping this and going straight to `git fetc
 risks setting local `main` to `<branch>`'s tip while origin has moved ahead underneath it, which
 fails the push and leaves local `main` diverged from `origin/main` (recover with `git fetch .
 origin/main:main -f`). Neither fetch touches HEAD or the working tree, so this is safe regardless
-of whose branch is currently checked out. Do not run `git fetch . <branch>:main` while HEAD is on
-`main` itself: git refuses outright (`fatal: refusing to fetch into branch 'refs/heads/main'
-checked out at ...`). That's the on-`main` case above, not this one.
+of whose branch is currently checked out **in the primary** — but `git fetch . <branch>:main`
+still refuses outright if `main` is checked out in *any* linked worktree, not just the primary
+(check `git worktree list` first if you're unsure). Do not run `git fetch . <branch>:main` while
+HEAD is on `main` itself: git refuses outright (`fatal: refusing to fetch into branch
+'refs/heads/main' checked out at ...`). That's the on-`main` case above, not this one.
 
 If main moved since you branched, each path fails at a different point. Rebase and retry:
 
 - **On-`main` path:** the `git merge --ff-only <branch>` step refuses (diverging branches can't
-  fast-forward). If `<branch>` lives in a worktree, re-enter it (`EnterWorktree` with its path from
-  `git worktree list`), run `git fetch origin && git rebase origin/main` there, `ExitWorktree
-  action: "keep"` again, then retry the on-`main` sequence from the primary (running `git rebase
-  main` directly in the primary is a no-op here, since HEAD there is already `main`). If `<branch>`
-  is a plain branch and not checked out anywhere, rebase it from a scratch worktree instead of
-  checking it out in the primary (`git worktree add <tmp-path> <branch>`, rebase there, `git
-  worktree remove <tmp-path>`). Checking out `<branch>` directly in a shared primary is the same
-  HEAD-hijack hazard this section opened with, just moving HEAD the other direction.
+  fast-forward). This can happen two ways — check which before rebasing:
+  - `origin/main` has moved ahead of local `main` (another session pushed): if `<branch>` lives in
+    a worktree, re-enter it (`EnterWorktree` with its path from `git worktree list`), run `git
+    fetch origin && git rebase origin/main` there, `ExitWorktree action: "keep"` again, then retry
+    the on-`main` sequence from the primary.
+  - Local `main` is ahead of `origin/main` (an unpushed commit already sitting in the primary
+    checkout — e.g. another session committed there but hasn't pushed yet): `git rebase
+    origin/main` in the worktree is a no-op in this case, since origin hasn't moved — it will
+    silently fail to pick up local `main`'s extra commit. Run `git rebase main` instead (the local
+    ref, not `origin/main`) in the worktree, then retry as above. Check `git rev-parse main
+    origin/main` from the primary if you're unsure which case you're in.
+  - (Running `git rebase main` or `git rebase origin/main` directly in the primary itself is
+    always a no-op here, since HEAD there is already `main`.) If `<branch>` is a plain branch and
+    not checked out anywhere, rebase it from a scratch worktree instead of checking it out in the
+    primary (`git worktree add <tmp-path> <branch>`, rebase there, `git worktree remove
+    <tmp-path>`). Checking out `<branch>` directly in a shared primary is the same HEAD-hijack
+    hazard this section opened with, just moving HEAD the other direction.
 - **Off-`main` path:** the `git fetch . <branch>:main` step itself refuses (non-fast-forward).
-  Rebase `<branch>` onto `origin/main` in place (`git fetch origin && git rebase origin/main`),
-  then retry the off-`main` sequence above. A rebase rewrites the working tree of the checkout it
-  runs in. If another session might be active in this same checkout, do the rebase from a worktree
-  instead: same shared-checkout hazard, landing on the working tree instead of HEAD.
+  Check `git branch --show-current` in the checkout where `<branch>` lives before rebasing "in
+  place" — if that checkout's HEAD is actually on `<branch>`, rebase it there (`git fetch origin
+  && git rebase origin/main`); if HEAD is on something else (a concurrent session's own branch, in
+  the primary checkout of a worktree landing), rebasing "in place" would rebase that other branch,
+  not `<branch>` — rebase `<branch>` from a scratch worktree instead (`git worktree add <tmp-path>
+  <branch>`, `git fetch origin && git rebase origin/main` there, `git worktree remove <tmp-path>`).
+  Either way, then retry the off-`main` sequence above. A rebase rewrites the working tree of the
+  checkout it runs in — the scratch-worktree path avoids that shared-checkout hazard entirely.
 
 Then clean up:
 - Worktree: `git worktree remove <path>` (add `--force` only if it refuses over the now-merged

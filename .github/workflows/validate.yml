@@ -79,7 +79,7 @@ jobs:
         run: |
           set -euo pipefail
           # A plugin whose skills call mcp__plane__* flat tools depends on the
-          # vdaluz/plane-mcp-server fork, not the official server (see META-158).
+          # vdaluz/plane-mcp-server fork, not the official server.
           # Scoped to each plugin's skills/ dir, not its README, so this check's
           # own pattern text can never self-match.
           mismatch=0
@@ -141,3 +141,17 @@ jobs:
             exit 1
           fi
           echo "No tracked .DS_Store files."
+      - name: Verify plugin.json version matches marketplace.json
+        run: |
+          set -euo pipefail
+          mismatch=0
+          for plugin_dir in plugins/*/; do
+            name="$(basename "$plugin_dir")"
+            plugin_version="$(jq -r '.version' "$plugin_dir/.claude-plugin/plugin.json")"
+            marketplace_version="$(jq -r --arg name "$name" '.plugins[] | select(.name == $name) | .version' .claude-plugin/marketplace.json)"
+            if [ "$plugin_version" != "$marketplace_version" ]; then
+              echo "::error::$name: plugin.json version ($plugin_version) != marketplace.json version ($marketplace_version)"
+              mismatch=1
+            fi
+          done
+          exit $mismatch

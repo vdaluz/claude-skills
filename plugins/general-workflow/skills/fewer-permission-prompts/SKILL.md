@@ -63,12 +63,12 @@ Then, add these to the appropriate settings file (see Step 7).
    | # | Pattern | Count | Notes |
    |---|---------|-------|-------|
    | 1 | `Bash(kubectl get *)` | 142 | cluster resource checks |
-   | 2 | `Bash(gh pr view *)` | 87 | PR inspection |
+   | 2 | `Bash(dig *)` | 87 | DNS lookups |
    | 3 | `mcp__slack__slack_read_thread` | 54 | Slack thread reads |
 
 7. **Write entries to the correct settings file.**
 
-   **Default: `~/.claude/settings.json` (user-level).** Generic permissions — MCP tools, `ping`, `dig`, `gh pr view *`, and similar read-only commands — go here so they apply across all projects without duplication. Don't list `curl` or `make` as examples here without a narrow form attached: an unqualified `curl`/`make` example reads as endorsing a blanket wildcard, which step 2 above explicitly forbids for `make *` and step 2's mutation rule also covers unscoped `curl` (a POST/PUT/DELETE, or a write to disk via `-o`). A narrow, already-vetted form (e.g. `Bash(curl -sI *)`, `Bash(make validate)`) is fine to add here — the point is the pattern must be safety-vetted before landing in this generic-entries list, not that curl/make can never appear.
+   **Default: `~/.claude/settings.json` (user-level).** Generic permissions — MCP tools, `ping`, `dig`, `kubectl describe *`, and similar read-only commands — go here so they apply across all projects without duplication. Don't list `curl` or `make` as examples here without a narrow form attached: an unqualified `curl`/`make` example reads as endorsing a blanket wildcard, which step 2 above explicitly forbids for `make *` and step 2's mutation rule also covers unscoped `curl` (a POST/PUT/DELETE, or a write to disk via `-o`). A narrow, already-vetted form (e.g. `Bash(curl -sI *)`, `Bash(make validate)`) is fine to add here — the point is the pattern must be safety-vetted before landing in this generic-entries list, not that curl/make can never appear.
 
    **Exception: project-level `.claude/settings.json`** only when the pattern itself is tightly coupled to that specific project — i.e., the pattern literally contains a project-specific URL, hostname, or path. A pattern that fires identically in any project goes in the user-level file.
 

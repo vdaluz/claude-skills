@@ -10,9 +10,10 @@ Arguments: project identifier — optional, auto-detected from cwd. Optional `--
 
 ## Step 1 — Resolve project
 
-If you keep a cwd-to-project shortcut table (e.g. "when cwd contains `my-app`, that's project `APP`"), try it first. Otherwise, or if it doesn't match, ask the user which project — or resolve it via `mcp__plane__list_projects` if they gave you a project name or identifier.
-
-Get the project ID and state UUIDs (Backlog, Todo, In Progress, Blocked, Done, Cancelled) — from a cached reference file if you keep one, or via `mcp__plane__list_states` otherwise. Not every project has a state literally named "Blocked" — if none exists, skip the blocked-recovery path (Steps 4-5) entirely; there's nothing to recover.
+Resolve the project and its state UUIDs (Backlog, Todo, In Progress, Blocked, Done, Cancelled)
+per `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md`. Not every project has a
+state literally named "Blocked" — if none exists, skip the blocked-recovery path (Steps 4-5)
+entirely; there's nothing to recover.
 
 ## Step 2 — Fetch issues in scope
 
@@ -28,7 +29,7 @@ If your project uses a label or title convention to separate content backlog (bl
 ## Step 3 — If the candidate pool is non-empty, rank it
 
 1. **Cheap objective triage first**, to cut a possibly-large pool down to a shortlist before reading anything in full:
-   - Priority weight: `urgent`=4, `high`=3, `medium`=2, `low`=1, `none`=0.
+   - Priority weight: per `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md`'s Priority weight section (`urgent`=4 … `none`=0).
    - Overdue/due-soon bump: any candidate with `target_date` on or before today (or within a few days) gets an urgency bump.
    - Best-effort blocking leverage: for the top ~15 by the above, probe `mcp__plane__list_work_item_relations(project_id, work_item_id)` once on the first candidate. If that call 404s, skip the leverage check entirely for the rest of the run (relations unavailable this run - unknown leverage, not zero). Otherwise call it for each of the ~15 and note how many other in-scope issues each one blocks, treating any individual pydantic-validation-error issue as unknown leverage rather than skipping the rest. See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("Relations calls can fail entirely, two different ways") for the full handling.
    - Take the top 6-10 by this cheap score as the shortlist.

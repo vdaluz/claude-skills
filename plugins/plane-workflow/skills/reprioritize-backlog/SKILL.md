@@ -11,7 +11,8 @@ Arguments: project identifier — optional; auto-detected from cwd if omitted, o
 
 ## Step 1 — Resolve project and scope
 
-Resolve the project and its Backlog (and Todo, if `--include-todo`) state UUIDs per `_shared/plane-project-resolve.md`.
+Resolve the project and its Backlog (and Todo, if `--include-todo`) state UUIDs per
+`${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md`.
 
 If your project uses a label or title convention to separate content backlog (blog drafts, dev logs, etc.) from actionable engineering work — the same one you'd use to filter a "what's next" listing — apply it here too, so content-backlog issues don't get mixed into an engineering reprioritization pass. Projects without that kind of convention: no filter, include everything.
 
@@ -42,7 +43,7 @@ Build a directed graph: live-blocker → blocked, restricted to edges where the 
 **Priority must not be the primary sort key.** If stored `priority` dominates the ordering and dependency leverage only breaks ties *within* a priority tier, a `low`-labeled issue blocking five others can never outrank a `medium` issue blocking nothing — dependency becomes decorative, and the whole exercise degenerates into "sort by the label a human typed in once at creation time," which Plane's UI already does natively. That defeats the point of a *dependency-aware* reprioritization. Score them together instead:
 
 1. **Topological layers** over the dependency graph (Kahn's algorithm): layer 0 = issues with no live in-scope blocker; layer 1 = issues whose blockers are all resolved by layer 0; and so on. This is the one hard constraint — a blocked issue never outranks its own open blocker, no matter its score.
-2. **Priority weight**: `urgent`=4, `high`=3, `medium`=2, `low`=1, `none`=0.
+2. **Priority weight**: per `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-project-resolve.md`'s Priority weight section (`urgent`=4 … `none`=0).
 3. **Within each layer**, compute one composite score per issue: `own priority weight + sum of priority weights of every live in-scope issue it directly blocks`. This is what makes dependency genuinely *count*: an issue that unblocks one `urgent` issue (weight 4) outscores a `medium` issue (weight 2) that unblocks nothing, even though its own label is lower. Sort the layer by this score, descending.
 4. **Tie-break** (score still equal): **do not fall straight to age** - a multi-way tie is the common case, not a rare edge case (see `${CLAUDE_SKILL_DIR}/reference.md`, "Why age can't be the default tie-break"). Read each tied issue's actual `description_html`, already in hand from Step 2's fetch (not just the title), and rank by content judgment: concrete and well-scoped with a clear next action beats a vague one-liner with no detail; an issue whose own description says it's explicitly gated, parked, or blocked on an unmet prerequisite ("build when X exists", "activate ~60 days before Y") sorts to the **bottom** of its tier regardless of age. Only fall back to `created_at` (older first), then `target_date` if set (soonest first), for issues that remain genuinely indistinguishable after that read.
 5. Concatenate the layers in order. This is the proposed new Backlog order.

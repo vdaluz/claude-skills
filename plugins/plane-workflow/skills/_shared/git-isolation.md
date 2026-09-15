@@ -3,16 +3,21 @@
 Shared by `start-issue` and `continue-issue`. Read this once; each skill only
 states what's specific to its own step.
 
-## Default: work directly on main
+## Default: branch off main, no worktree
 
-Default to working directly on `main` unless this session genuinely needs isolation — e.g. you
-know another agent is actively working this repo right now, or the user asks for one.
+Default to a plain branch per issue — `git checkout -b <issue-id>-<slug>` — off `main`, no PR
+required, fast-forward-merged back at wrap-up. Working directly on `main` is the exception: only
+when strictly necessary and explicitly authorized (e.g. the user says to skip the branch for a
+trivial one-line fix). Worktrees stay opt-in on top of that — reach for one deliberately when this
+session genuinely needs isolation, e.g. you know another agent is actively working this repo right
+now, or the user asks for one.
 
 ## Creating isolation
 
-- Worktree: `EnterWorktree` (branch named after the issue ID, e.g. `proj-571-feature-name`).
-  Always prompts for confirmation — reach for it deliberately, not by default.
-- Plain branch (no worktree): `git checkout -b <issue-id>-<slug>`.
+- Plain branch (default): `git checkout -b <issue-id>-<slug>` off `main`.
+- Worktree (deliberate, on top of the branch default): `EnterWorktree` (branch named after the
+  issue ID, e.g. `proj-571-feature-name`). Always prompts for confirmation — reach for it only
+  when this session genuinely needs concurrent-checkout isolation, not by default.
 
 ## Resuming existing isolation
 
@@ -115,6 +120,11 @@ Then clean up:
   already-merged local branch left behind above. That's expected, not a sign cleanup failed.
 
 Skip all of the above if you worked directly on `main`.
+
+**Scratch/verification checkouts** (e.g. building a package for `npm pack` testing) go through
+this same `EnterWorktree`/`git worktree add`+`remove` path too, not a hand-made sibling directory
+like `../<repo>-worktrees/<name>` — there's no tooling reason to use that shape, and it's the kind
+of directory that goes stale and orphaned if created by hand instead.
 
 ## Encrypted or binary config merge conflicts
 

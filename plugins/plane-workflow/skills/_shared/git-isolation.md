@@ -53,26 +53,26 @@ fails the push and leaves local `main` diverged from `origin/main` (recover with
 origin/main:main -f`). Neither fetch touches HEAD or the working tree, so this is safe regardless
 of whose branch is currently checked out **in the primary** — but `git fetch . <branch>:main`
 still refuses outright if `main` is checked out in *any* linked worktree, not just the primary
-(check `git worktree list` first if you're unsure). Do not run `git fetch . <branch>:main` while
+(check `git worktree list` first if you're unsure) — if it is, run the on-`main` sequence from
+that worktree instead. Do not run `git fetch . <branch>:main` while
 HEAD is on `main` itself: git refuses outright (`fatal: refusing to fetch into branch
 'refs/heads/main' checked out at ...`). That's the on-`main` case above, not this one.
 
 If main moved since you branched, each path fails at a different point. Rebase and retry:
 
 - **On-`main` path:** the `git merge --ff-only <branch>` step refuses (diverging branches can't
-  fast-forward). This can happen two ways — check which before rebasing:
-  - `origin/main` has moved ahead of local `main` (another session pushed): if `<branch>` lives in
-    a worktree, re-enter it (`EnterWorktree` with its path from `git worktree list`), run `git
-    fetch origin && git rebase origin/main` there, `ExitWorktree action: "keep"` again, then retry
-    the on-`main` sequence from the primary.
-  - Local `main` is ahead of `origin/main` (an unpushed commit already sitting in the primary
-    checkout — e.g. another session committed there but hasn't pushed yet): `git rebase
-    origin/main` in the worktree is a no-op in this case, since origin hasn't moved — it will
-    silently fail to pick up local `main`'s extra commit. Run `git rebase main` instead (the local
-    ref, not `origin/main`) in the worktree, then retry as above. Check `git rev-parse main
-    origin/main` from the primary if you're unsure which case you're in.
-  - (Running `git rebase main` or `git rebase origin/main` directly in the primary itself is
-    always a no-op here, since HEAD there is already `main`.) If `<branch>` is a plain branch and
+  fast-forward) because `origin/main` moved ahead of local `main` during the pull. If `<branch>`
+  lives in a worktree, re-enter it (`EnterWorktree` with its path from `git worktree list`), run
+  `git fetch origin && git rebase main` there — the local `main` ref, not `origin/main`. Since the
+  preceding `git pull --ff-only` already brought local `main` up to date with `origin/main`,
+  rebasing onto local `main` covers both a moved origin and an already-present unpushed local
+  commit in the same step. `ExitWorktree action: "keep"` again, then retry the on-`main` sequence
+  from the primary.
+  - If `git pull --ff-only` itself refuses instead of the merge step, local `main` has an unpushed
+    commit from another session and origin has diverged from it too. Stop and coordinate with that
+    session — never rebase or reset `main` in a shared primary to force past this.
+  - (Running `git rebase main` directly in the primary itself is always a no-op here, since HEAD
+    there is already `main`.) If `<branch>` is a plain branch and
     not checked out anywhere, rebase it from a scratch worktree instead of checking it out in the
     primary (`git worktree add <tmp-path> <branch>`, rebase there, `git worktree remove
     <tmp-path>`). Checking out `<branch>` directly in a shared primary is the same HEAD-hijack

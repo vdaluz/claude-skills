@@ -119,7 +119,8 @@ Then clean up:
 - Confirm: `git branch -a` shows `main`/`origin/main` plus, in the plain-branch case, the
   already-merged local branch left behind above. That's expected, not a sign cleanup failed.
 
-Skip all of the above if you worked directly on `main`.
+Skip all of the above only in the rare case you worked directly on `main` (explicitly authorized
+exception — see Default above).
 
 **Scratch/verification checkouts** (e.g. building a package for `npm pack` testing) go through
 this same `EnterWorktree`/`git worktree add`+`remove` path too, not a hand-made sibling directory

@@ -40,7 +40,7 @@ Steps:
 
 5. Once user approves the plan:
    - **Spike:** begin research. No worktree. Post findings incrementally as Plane comments. When complete, post a final findings comment, then tell the user to mark the spike Done and run `/spike-to-issues` themselves to convert findings into implementation issues.
-   - **Non-spike — work directly on `main` by default**, isolating only when this session genuinely needs it. Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
+   - **Non-spike — create a branch for this issue by default** (no worktree unless this session genuinely needs one). Decision rule, worktree/branch creation, and the encrypted-config merge-conflict note: `${CLAUDE_PLUGIN_ROOT}/skills/_shared/git-isolation.md`.
 
      In all cases, post the plan as a Plane comment, then begin making changes.
 

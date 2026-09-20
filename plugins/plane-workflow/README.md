@@ -37,12 +37,14 @@ After install, skills are available namespaced: `/plane-workflow:start-issue`, `
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
 | `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
+| `review-to-issues` | File approved project-review findings as issues, deduplicated against open issues |
 | `whats-next` | Show what's next for a Plane project across In Progress/Todo/Backlog/Blocked |
 | `pick-next-issue` | Recommend up to 4 ranked next-issue candidates instead of a raw list |
 | `reprioritize-backlog` | Reorder a Backlog by dependency + urgency, applied only after explicit approval |
 
 ## Optional integrations
 
+- **general-workflow's `project-review`**: `review-to-issues` consumes the `findings.md` that skill writes. Without it there is nothing for `review-to-issues` to file.
 - **A browser-verification skill** (e.g. general-workflow's `browser-verify`): if you have one installed, `start-issue` points to it for exercising UI changes before marking them done. Not required - the UI-verification step works without it, just less thoroughly.
 
 ## Manual install (without the marketplace)

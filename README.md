@@ -29,6 +29,7 @@ Reusable skills for planning, research, code review, and PRD writing. Core skill
 | `create-prd` | Create a PRD for a project or feature |
 | `browser-verify` | Drive a real browser via Playwright MCP to verify a UI change before calling it done |
 | `stale-repos` | Scan git repos under a root for stale branches/worktrees and offer safe cleanup |
+| `project-review` | Whole-project code and/or design review ending in a capped, evidence-backed list of proposed issues |
 
 ### [plane-workflow](plugins/plane-workflow/)
 
@@ -43,6 +44,7 @@ Skills for [Plane](https://plane.so) project management.
 | `create-issue` | Create a new Plane issue in Backlog |
 | `prd-to-issues` | Parse a PRD and create one Plane issue per spike and feature area |
 | `spike-to-issues` | Convert a completed spike's findings into concrete implementation issues |
+| `review-to-issues` | File approved project-review findings as issues, deduplicated against open issues |
 | `whats-next` | Show what's next for a Plane project across In Progress/Todo/Backlog/Blocked |
 | `pick-next-issue` | Recommend up to 4 ranked next-issue candidates instead of a raw list |
 | `reprioritize-backlog` | Reorder a Backlog by dependency + urgency, applied only after explicit approval |

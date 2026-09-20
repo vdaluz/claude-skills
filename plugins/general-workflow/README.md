@@ -22,11 +22,13 @@ After install, skills are available namespaced: `/general-workflow:roast`, `/gen
 | `create-prd` | Create a PRD for a project or feature (outputs to Plane page or markdown file) |
 | `browser-verify` | Drive a real browser via Playwright MCP to verify a UI change before calling it done |
 | `stale-repos` | Scan git repos under a root for stale branches/worktrees and offer safe cleanup |
+| `project-review` | Whole-project code and/or design review ending in a capped, evidence-backed list of proposed issues |
 
 ### Optional integrations
 
 - `create-prd` and `research` post to Plane if the fork-specific Plane MCP server is configured (see [plane-workflow's prerequisite](../plane-workflow/README.md#prerequisite-plane-mcp-server) - [vdaluz/plane-mcp-server](https://github.com/vdaluz/plane-mcp-server), not the official server), falling back to chat output otherwise.
 - `browser-verify` requires the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) configured — it doesn't work without it.
+- `project-review` spawns two plugin agents, `review-judge` and `review-refuter` (in this plugin's `agents/`), which are pinned to `model: fable` so the judging runs on the strongest model regardless of the session's main model. They are only ever invoked by that skill. No Fable access: change `model:` in those two files to `opus` or `inherit`. Its `design` mode needs the [Playwright MCP server](https://github.com/microsoft/playwright-mcp); its `code` mode uses only tools the reviewed project already has. It writes evidence to a `.review/` directory and adds that to the project's `.gitignore` if it isn't ignored already. Manual install: also copy `agents/review-*.md` into `~/.claude/agents/`.
 - `stale-repos` is workstation-local (reads your local filesystem) — it can't run as a cloud/scheduled routine.
 
 ## Manual install (without the marketplace)

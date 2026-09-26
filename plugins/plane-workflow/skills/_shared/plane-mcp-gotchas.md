@@ -14,9 +14,17 @@ Do not pass a `pql` filter to `mcp__plane__list_work_items` unless the skill ste
 explicitly needs it - some Plane editions reject query filtering outright, with an explicit
 error rather than a permissions-style failure: "PQL and structured filters are not supported
 on this Plane edition. Remove the pql/filters parameter and filter results client-side..." Call
-it with only `project_id`, `expand`, and an explicit `fields` list instead - filter and sort
-yourself over the full result. If the trimmed result still exceeds the tool's output limit, it's
-auto-saved to a file - use `jq` rather than re-requesting with filters.
+it with only `project_id`, `expand`, an explicit `fields` list and an explicit `per_page=100`
+instead - filter and sort yourself over the full result. If a trimmed page still exceeds the
+tool's output limit, it's auto-saved to a file - use `jq` on that page rather than re-requesting
+with filters.
+
+## Never omit `per_page`
+
+`mcp__plane__list_work_items` does not default to a small page. Called without `per_page`, it
+returns the entire project unpaginated in one response, which overflows the tool's output limit
+on any project above a few hundred issues. Always pass `per_page=100` and walk the pages until
+the result says there are no more.
 
 ## Relations calls can fail entirely, two different ways
 
@@ -38,3 +46,7 @@ and they need different handling:
   unavailable this run. If the probe succeeds (or throws the pydantic error above, which is a
   per-issue signal, not an endpoint-down signal), keep calling it normally for the remaining
   issues.
+
+No working fallback is known for either case: `retrieve_work_item` with
+`expand="issue_relation"` does not return relations, and guessed REST relation endpoints all 404.
+Do not spend time re-guessing endpoints.

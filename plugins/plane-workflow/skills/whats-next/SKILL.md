@@ -33,7 +33,7 @@ Resolve the project and its state UUIDs (In Progress, Todo, Backlog, Blocked) pe
 
 ## Step 2 — Fetch and partition issues
 
-See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("`pql`/structured filters can be entirely unsupported") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,updated_at"`.
+See `${CLAUDE_PLUGIN_ROOT}/skills/_shared/plane-mcp-gotchas.md` ("`pql`/structured filters can be entirely unsupported") before calling `mcp__plane__list_work_items` - call it with only `project_id`, `expand="state,labels"`, `per_page=100` (walking the pages) and `fields="id,sequence_id,name,priority,state,labels,target_date,created_at,updated_at"`.
 
 Partition by state name/group:
 - **In Progress** (group `started`)

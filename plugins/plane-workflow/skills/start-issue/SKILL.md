@@ -31,6 +31,7 @@ Steps:
    - Fetch every reference link in the issue description (WebFetch - issue independent links as parallel calls in the same turn, not one at a time)
    - Run WebSearch if the issue mentions research, evaluation, or alternatives
    - Cite sources in the plan (e.g. "per official docs at X…")
+   - Challenge the ticket's premise before adopting its fix. Treat the description's diagnosis, suggested next step, and acceptance criteria as hypotheses from whoever filed it, not as the spec. Answer three questions: why does this problem exist at all; is there a design change that removes it, rather than a procedure that satisfies the acceptance criterion once; does an existing pattern (project notes, a sibling repo, tooling already installed) solve it differently? Put the answer in the plan as one line: `Premise check: kept` or `Premise check: changed - <why>`. If the better fix is outside the ticket's scope, plan it instead of the ticket's step, or file it and say so; never silently run the ticket's step when you have found a fix that stops the problem recurring.
 
    Then produce a short research-backed implementation plan (tasks only, no "research X" steps), risks/unknowns. For learning-oriented projects, include a brief "why" for each step. If the issue is a service deployment and your project has a deployment checklist skill or doc, use it as a mandatory checklist. For complex or infrastructure-changing plans, suggest running a review/roast pass before proceeding.
 

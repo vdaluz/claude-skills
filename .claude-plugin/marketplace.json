@@ -10,7 +10,7 @@
       "name": "general-workflow",
       "source": "./plugins/general-workflow",
       "description": "Reusable skills for planning, research, code review, and PRD writing - core skills need no external tools",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "category": "productivity",
       "keywords": ["planning", "research", "review", "prd", "workflow"]
     },

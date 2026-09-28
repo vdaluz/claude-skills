@@ -2,7 +2,6 @@
 name: research
 description: Research a topic across in-repo docs, official documentation, and communities, with a mandatory hard-requirements gate before recommending anything. Use when the user asks to research, evaluate, compare, or choose between tools/approaches/services, or wants sourced findings.
 argument-hint: "[topic] [issue-id] [constraints]"
-effort: xhigh
 ---
 
 Research a topic across in-repo docs, official documentation, and communities.

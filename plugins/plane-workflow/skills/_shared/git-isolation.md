@@ -28,12 +28,29 @@ now, or the user asks for one.
 
 ## Landing (fast-forward merge + cleanup)
 
+**Definition of done for every issue branch.** Landing is not finished until all four hold,
+checked with commands, not assumed:
+
+1. The work is on `origin/main` (`git merge-base --is-ancestor <branch> origin/main` succeeds).
+2. The checkout this session moved off `main` is back on `main` at `origin/main`
+   (`git status -sb` prints `## main...origin/main` with no ahead/behind).
+3. The local branch is gone (`git branch --list <branch>` prints nothing).
+4. The remote branch is gone, if it was ever pushed (`git ls-remote --heads origin <branch>`
+   prints nothing).
+
+If any of these can't be met, tell the user explicitly: name the branch, the unmet item, and the
+reason. Valid reasons are narrow: the issue is blocked or paused, so its unmerged branch is kept
+and pushed on purpose; HEAD is on a branch this session didn't create; the working tree has
+uncommitted changes that aren't this issue's; or deleting the remote branch was declined.
+
 From the primary checkout (`ExitWorktree` with `action: "keep"` first if inside a worktree, so the
 branch survives for the merge). The exact commands depend on what the primary checkout's HEAD is
-on right now, so check with `git branch --show-current` first. The rule in both cases is the same:
-never run `git checkout main` as a landing step. A plain branch checkout has one `.git/HEAD` file
-shared across every session working that checkout, so checking out `main` there silently moves
-every concurrent session's apparent branch too, not just yours.
+on right now, so check with `git branch --show-current` first. Never run `git checkout main` to
+move HEAD off a branch this session didn't create. A plain branch checkout has one `.git/HEAD`
+file shared across every session working that checkout, so checking out `main` there silently
+moves every concurrent session's apparent branch too, not just yours. Moving HEAD off this issue's
+own branch back to `main` after landing is the opposite case: it undoes this session's own
+`git checkout -b`, and it is required (see "Return to main" below).
 
 **HEAD is already `main`** (the common case after `ExitWorktree action: "keep"`, since the primary
 checkout was never moved off `main` in the first place):
@@ -100,13 +117,17 @@ Then clean up:
 - Remote branch: `git push origin --delete <branch>`, then `git fetch --prune`. Both are safe
   regardless of what's checked out. If the remote branch is already gone (GitHub auto-deleted it),
   skip this step.
-- Local branch: `git branch -d <branch>` (`-D` if rebased) only if `<branch>` is not the branch
-  currently checked out in this checkout (check with `git branch --show-current`). Deleting the
+- **Return to main.** If `git branch --show-current` prints `<branch>` (this issue's own branch,
+  the plain-branch default), move HEAD back, one command per call:
+  1. `git status --porcelain`: if it prints anything, stop and report it. Never stash or discard
+     someone else's changes to get past this.
+  2. `git checkout main`
+  3. `git pull --ff-only`
+  If HEAD is on any other branch that isn't `main`, leave it there and tell the user.
+- Local branch: `git branch -d <branch>` (`-D` if rebased), after returning to main. Deleting a
   checked-out branch always fails (`error: cannot delete branch '<branch>' used by worktree at
-  '<path>'`), and checking out something else first just to force the delete recreates the same
-  HEAD-hijack hazard the sequences above exist to avoid. In that case, leave the local ref in
-  place. It's fully merged into `main`, so it's inert clutter, not a risk, and it deletes cleanly
-  the next time `main` is naturally checked out there for unrelated reasons.
+  '<path>'`), which is why the return to main comes first. Never check out another session's
+  branch to get around this.
 
   **If `<branch>` is not checked out anywhere but `-d` still refuses** ("not fully merged"), this
   happens whenever the primary's HEAD sits on a third branch unrelated to both `main` and
@@ -116,8 +137,10 @@ Then clean up:
   never chained: first `git merge-base --is-ancestor <branch> origin/main`; only if that succeeds,
   `git branch -D <branch>` as its own call. If the ancestry check fails, stop. The refusal is real,
   not spurious.
-- Confirm: `git branch -a` shows `main`/`origin/main` plus, in the plain-branch case, the
-  already-merged local branch left behind above. That's expected, not a sign cleanup failed.
+- Confirm the definition of done: run `git branch --show-current`, `git status -sb`,
+  `git branch --list <branch>` and `git ls-remote --heads origin <branch>`, and include the results
+  in the wrap-up. A merged branch still listed locally or on origin means cleanup failed: finish it,
+  or report it to the user as an explicit exception.
 
 Skip all of the above only in the rare case you worked directly on `main` (explicitly authorized
 exception — see Default above).

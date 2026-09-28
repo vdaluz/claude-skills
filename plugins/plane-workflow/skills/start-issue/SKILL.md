@@ -45,6 +45,6 @@ Steps:
 
      In all cases, post the plan as a Plane comment, then begin making changes.
 
-     **When implementation is complete and verified: commit, merge, and close out the issue per your project's own wrap-up process** (a dedicated wrap-up skill if you have one, or your normal commit/merge/close routine otherwise). If you worked in a worktree or branch, land it per `git-isolation.md`'s "Landing" section — fast-forward merge, then confirm the branch/worktree list before and after cleanup. Don't skip this step — it's easy to leave an issue open, or a stale branch behind, after the code lands.
+     **When implementation is complete and verified: commit, merge, and close out the issue per your project's own wrap-up process** (a dedicated wrap-up skill if you have one, or your normal commit/merge/close routine otherwise). If you worked in a worktree or branch, land it per `git-isolation.md`'s "Landing" section: fast-forward merge, return the checkout to an up-to-date `main`, and delete the branch locally and on origin. The issue is done only when that file's definition of done holds. If the session stops before landing (the issue is blocked or paused), commit and push the branch, return to `main`, and tell the user the branch name and why it was kept. Don't skip this step, because it's easy to leave an issue open, or a stale branch behind, after the code lands.
 
 Dual documentation: put full detail in Plane; always include a usable summary in chat.

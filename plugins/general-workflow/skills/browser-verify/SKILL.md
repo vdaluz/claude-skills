@@ -35,7 +35,9 @@ This skill depends on the `playwright` MCP server. For it to launch your real in
 
 ## Known limitation
 
-Some Playwright MCP setups launch the browser detached, in its own process group, by design — an abnormal session end (terminal force-quit, crash, `kill -9`) can still leave an orphaned browser instance behind even when `browser_close` was called correctly on every prior run. Calling `browser_close` still matters: it closes the browser promptly within a still-open session instead of leaving it resident for the rest of a long-lived session.
+Some Playwright MCP setups launch the browser detached, in its own process group, by design. An abnormal session end (terminal force-quit, crash, `kill -9`) can still leave an orphaned browser instance behind even when `browser_close` was called correctly on every prior run. Calling `browser_close` still matters: it closes the browser promptly within a still-open session instead of leaving it resident for the rest of a long-lived session.
+
+`@playwright/mcp` also supports `--idle-timeout <ms>`, which closes a browser left idle with no completed tool call; the next tool call relaunches it. It defaults to one hour for headless browsers and never for headed ones, and `0` disables it. This covers a browser forgotten mid-session, not the abnormal-session-end case above: there the MCP server dies too, so nothing is left running to enforce the timeout.
 
 **If orphaned browser instances accumulate** (visible in your Dock/taskbar, not opened by you): check whether the MCP server uses a distinct user-data-dir/profile from your normal browser profile — if so, those orphaned instances can be safely killed by matching on that profile path without touching normal browsing windows, e.g.:
 ```bash

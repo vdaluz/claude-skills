@@ -115,7 +115,7 @@ jobs:
             plugins/general-workflow/skills/project-review/SKILL.md:high \
             plugins/plane-workflow/skills/whats-next/SKILL.md:low \
             | sort)"
-          actual="$(grep -rH --include='*.md' -E '^effort:' plugins | sed -E 's/:effort: */:/' | sort)"
+          actual="$({ grep -rH --include='*.md' -E '^effort:' plugins || [ $? -eq 1 ]; } | sed -E 's/:effort: */:/' | sort)"
           unexpected="$(comm -13 <(echo "$allowed") <(echo "$actual"))"
           if [ -n "$unexpected" ]; then
             echo "$unexpected" | while IFS= read -r entry; do

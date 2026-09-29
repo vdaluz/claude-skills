@@ -10,7 +10,7 @@
       "name": "general-workflow",
       "source": "./plugins/general-workflow",
       "description": "Reusable skills for planning, research, code review, and PRD writing - core skills need no external tools",
-      "version": "0.8.2",
+      "version": "0.8.3",
       "category": "productivity",
       "keywords": ["planning", "research", "review", "prd", "workflow"]
     },
@@ -18,7 +18,7 @@
       "name": "plane-workflow",
       "source": "./plugins/plane-workflow",
       "description": "Skills for Plane project management - create, start, and continue issues; see and pick what's next; reprioritize the backlog; convert PRDs and spikes into issues. Requires the vdaluz/plane-mcp-server fork (flat tool surface), not the official server.",
-      "version": "0.6.2",
+      "version": "0.6.3",
       "category": "project-management",
       "keywords": ["plane", "issues", "project-management", "prd", "workflow"]
     }

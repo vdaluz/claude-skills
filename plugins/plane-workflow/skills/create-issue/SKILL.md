@@ -2,7 +2,6 @@
 name: create-issue
 description: Create a new Plane issue in the correct project with the correct state and any required labels. Use when the user asks to "create an issue", "file a ticket", or "add this to the backlog".
 argument-hint: "[project] [title] [description] [labels]"
-effort: low
 ---
 
 Create a new Plane issue.

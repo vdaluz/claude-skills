@@ -3,7 +3,6 @@ name: fewer-fetch-prompts
 description: Scan session history and add approved domains to the WebFetch allowlist to reduce permission prompts.
 allowed-tools: Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/scan_domains.py) Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/manage_allowlist.py *)
 disable-model-invocation: true
-effort: low
 ---
 
 Scan Claude Code session transcripts for frequently fetched domains, filter to safe public ones, and add them to `~/.claude/settings.json` so WebFetch no longer prompts for approved domains.

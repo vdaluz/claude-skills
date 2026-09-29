@@ -2,7 +2,6 @@
 name: stale-repos
 description: Scan the git repos in a root directory's immediate subdirectories for stale branches/worktrees, report by verdict, offer safe opt-in cleanup.
 argument-hint: "[--fetch] [--age-days N] [--root PATH] [--prune] [PATH ...]"
-effort: low
 disable-model-invocation: true
 ---
 

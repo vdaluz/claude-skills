@@ -62,6 +62,11 @@ git pull --ff-only && git merge --ff-only <branch> && git push origin main
 No `git checkout` needed here. HEAD is already where it needs to be, so the pull/merge/push
 sequence never touches it.
 
+Check HEAD in the same command as the merge, never in an earlier call: in a checkout another
+session may use, run `[ "$(git -C <repo> branch --show-current)" = main ] && git -C <repo> merge --ff-only <branch>`,
+because a concurrent session can switch the primary checkout between your check and your merge,
+and `merge` then fast-forwards that session's branch instead of `main`.
+
 **HEAD is on anything other than `main`** (your own issue branch, or, in the primary checkout of a
 worktree landing, a concurrent session's unrelated plain branch):
 

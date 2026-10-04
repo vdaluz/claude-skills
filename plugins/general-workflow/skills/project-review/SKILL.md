@@ -49,7 +49,12 @@ If that agent type is unavailable (manual install without the plugin's `agents/`
 
 **8. Advisor, second checkpoint.** If an advisor tool is available, print the final list (ids, titles, severities, one-line evidence) and consult the advisor: is any severity inflated, is any finding really two, is a whole area of `plan.md` unaccounted for? Apply corrections to `findings.md`. Make the file durable before this call, not after.
 
-**9. Present and stop.** In chat: the coverage header, then a numbered list - id, severity, title, one-line evidence, effort. Then the path to `findings.md`. Ask which findings the user wants filed. Do not file anything. If the plane-workflow plugin is installed, `review-to-issues` takes `findings.md` and the user's selection; otherwise any tracker skill or the user can file from the file.
+**9. Present, ask, hand off.**
+- In chat: the coverage header, then a numbered list - id, severity, title, one-line evidence, effort. Then the path to `findings.md`.
+- Ask which findings the user wants filed, with AskUserQuestion. An option may add a below-floor candidate by id when one deserves follow-up.
+- If the plane-workflow plugin is installed and the user picked any findings, invoke `plane-workflow:review-to-issues` with the project, the `findings.md` path, and the user's selection. The user's answer is the approval that skill needs for new, ungrouped issues.
+- Without plane-workflow, stop after the answer; any tracker skill or the user can file from the file.
+- This skill itself never creates issues.
 
 ## Rules
 

@@ -2,8 +2,8 @@
 """
 Stdlib-only fixture test for scan.py. Reproduces the reported data-loss bug
 (remote renamed away from "origin" silently turned unmerged local commits into "prune-gone")
-plus the other fixes from the same issue. Not wired into CI or pytest — a manual check /
-future CI building block.
+plus the other fixes from the same issue. .github/workflows/validate.yml runs every
+plugins/*/skills/*/test_*.py, this one included.
 
 Run: python3 test_scan.py
 """
@@ -54,7 +54,7 @@ def find(items, **kw):
 def test_renamed_remote_gone_ahead():
     """Exact reported repro: remote named "upstream" (not "origin"), a branch with a real
     local commit ahead of its upstream, upstream branch then deleted. Must resolve to
-    review-gone-ahead with a real ahead count — never prune-gone / ahead=None."""
+    review-gone-ahead with a real ahead count, never prune-gone / ahead=None."""
     with tempfile.TemporaryDirectory() as tmp:
         remote = init_repo(os.path.join(tmp, "remote"))
         commit(remote, "initial")
@@ -73,7 +73,7 @@ def test_renamed_remote_gone_ahead():
         git(repo, "branch", "-q", "--set-upstream-to=upstream/feature", "feature")
         commit(repo, "extra local-only commit", filename="ahead.txt")
 
-        # a control branch: genuinely merged, no extra commits — must stay prune-gone
+        # a control branch: genuinely merged, no extra commits, so it must stay prune-gone
         git(repo, "checkout", "-q", "main")
         git(remote, "checkout", "-q", "-b", "old-merged", "main")
         git(remote, "checkout", "-q", "main")

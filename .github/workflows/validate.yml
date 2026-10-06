@@ -128,6 +128,23 @@ jobs:
         run: |
           set -euo pipefail
           find . -name "*.py" -not -path "./.git/*" -print0 | xargs -0 -r python3 -m py_compile
+      - name: Run plugin skill tests
+        run: |
+          set -euo pipefail
+          for t in plugins/*/skills/*/test_*.py; do
+            echo "== $t"
+            python3 "$t"
+          done
+      - name: Check READMEs for em dashes
+        run: |
+          set -euo pipefail
+          # Built from bytes so this file never contains the glyph it checks for.
+          em_dash="$(printf '\342\200\224')"
+          if git grep -n "$em_dash" -- README.md 'plugins/*/README.md'; then
+            echo "::error::Replace each em dash above with a comma, colon, semicolon or ' - '."
+            exit 1
+          fi
+          echo "No em dashes in the READMEs."
       - name: Verify README skill tables match actual skills
         run: |
           set -euo pipefail

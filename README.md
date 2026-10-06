@@ -21,7 +21,7 @@ Reusable skills for planning, research, code review, and PRD writing. Core skill
 
 | Skill | Description |
 |---|---|
-| `roast` | Critically review a plan, code, or diff — blunt, prioritized by severity |
+| `roast` | Critically review a plan, code, or diff, blunt, prioritized by severity |
 | `research` | Research a topic across in-repo docs, official docs, and communities |
 | `meta-improvement` | Update a rule or skill based on a mistake or better approach found during work |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
@@ -68,18 +68,18 @@ PRs welcome. See [Anthropic's skill docs](https://docs.anthropic.com/en/docs/cla
 Skills here are hand-copied from a personal canonical `~/.claude/skills` and edited down for a
 public audience. Before exporting or re-syncing a skill, check for:
 
-- [ ] Local absolute paths (`/Users/<name>/...`) — genericize or remove.
-- [ ] Personal memory-file references (a specific cached-IDs filename, etc.) — describe the
+- [ ] Local absolute paths (`/Users/<name>/...`): genericize or remove.
+- [ ] Personal memory-file references (a specific cached-IDs filename, etc.): describe the
       pattern generically ("a cached reference file, if you keep one") instead of naming it.
-- [ ] Hardcoded project/issue-ID prefixes presented as universal (e.g. `LAB-`, `WQ1K-`) — fine as
+- [ ] Hardcoded project/issue-ID prefixes presented as universal (e.g. `LAB-`, `WQ1K-`): fine as
       one illustrative example among others, not fine as the only case handled.
-- [ ] References to skills or shared files that don't exist in this repo — `grep -rn
+- [ ] References to skills or shared files that don't exist in this repo: `grep -rn
       "<skill-name>" plugins/` for anything you're about to remove, and grep the file you're
       exporting for its own cross-references before publishing it.
 - [ ] OS-specific hard gates (e.g. `pbcopy`) without a documented fallback for other platforms.
 - [ ] Personal infrastructure specifics (specific internal tool names, specific config file paths
       from one person's setup) presented as general guidance.
-- [ ] Time-sensitive internal narration ("used to be mandatory, now it isn't") — state the current
+- [ ] Time-sensitive internal narration ("used to be mandatory, now it isn't"): state the current
       policy plainly instead of narrating its history.
 - [ ] README skill-count tables (root and per-plugin) match the actual directory contents.
 - [ ] Pinned CLI version in `.github/workflows/validate.yml` (`npm install -g @anthropic-ai/claude-code@X.Y.Z`) is reasonably current - `npm view @anthropic-ai/claude-code version` shows latest.

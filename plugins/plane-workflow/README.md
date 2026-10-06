@@ -1,6 +1,6 @@
 # plane-workflow
 
-Claude Code skills for [Plane](https://plane.so) project management — start issues, convert PRDs and spikes into issues, and resume work across sessions.
+Claude Code skills for [Plane](https://plane.so) project management: start issues, convert PRDs and spikes into issues, and resume work across sessions.
 
 ## Prerequisite: Plane MCP server
 

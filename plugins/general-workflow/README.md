@@ -14,7 +14,7 @@ After install, skills are available namespaced: `/general-workflow:roast`, `/gen
 
 | Skill | Description |
 |---|---|
-| `roast` | Critically review a plan, code, or diff — blunt, prioritized by severity |
+| `roast` | Critically review a plan, code, or diff, blunt, prioritized by severity |
 | `research` | Research a topic across in-repo docs, official docs, and communities |
 | `meta-improvement` | Update a rule or skill based on a mistake or better approach found during work |
 | `fewer-fetch-prompts` | Add approved domains to the WebFetch allowlist to reduce permission prompts |
@@ -27,9 +27,9 @@ After install, skills are available namespaced: `/general-workflow:roast`, `/gen
 ### Optional integrations
 
 - `create-prd` and `research` post to Plane if the fork-specific Plane MCP server is configured (see [plane-workflow's prerequisite](../plane-workflow/README.md#prerequisite-plane-mcp-server) - [vdaluz/plane-mcp-server](https://github.com/vdaluz/plane-mcp-server), not the official server), falling back to chat output otherwise.
-- `browser-verify` requires the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) configured — it doesn't work without it.
+- `browser-verify` requires the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) configured; it doesn't work without it.
 - `project-review` spawns two plugin agents, `review-judge` and `review-refuter` (in this plugin's `agents/`), which are pinned to `model: fable` so the judging runs on the strongest model regardless of the session's main model. They are only ever invoked by that skill. No Fable access: change `model:` in those two files to `opus` or `inherit`. Its `design` mode needs the [Playwright MCP server](https://github.com/microsoft/playwright-mcp); its `code` mode uses only tools the reviewed project already has. It writes evidence to a `.review/` directory and adds that to the project's `.gitignore` if it isn't ignored already. Manual install: also copy `agents/review-*.md` into `~/.claude/agents/`.
-- `stale-repos` is workstation-local (reads your local filesystem) — it can't run as a cloud/scheduled routine.
+- `stale-repos` is workstation-local (reads your local filesystem), so it can't run as a cloud/scheduled routine.
 
 ## Manual install (without the marketplace)
 

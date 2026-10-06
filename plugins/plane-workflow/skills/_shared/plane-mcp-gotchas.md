@@ -5,14 +5,16 @@ plugin's [prerequisite section](../../README.md#prerequisite-plane-mcp-server)),
 skills target - the PQL rejection below is the Plane backend edition's own behavior, not
 specific to any one MCP server, but was observed running against this fork.
 
-Shared by `pick-next-issue`, `reprioritize-backlog`, and `whats-next`. Read this once; each
+Shared by `pick-next-issue`, `reprioritize-backlog`, `review-to-issues`, and `whats-next`. Read this once; each
 skill only states what's specific to its own step.
 
 ## `pql`/structured filters can be entirely unsupported
 
 Do not pass a `pql` filter to `mcp__plane__list_work_items` unless the skill step you're on
 explicitly needs it - some Plane editions reject query filtering outright, with an explicit
-error rather than a permissions-style failure: "PQL and structured filters are not supported
+error rather than a permissions-style failure. The structured filters (`state_groups`,
+`priorities`, `label_ids`) fail the same way, on `mcp__plane__count_work_items` as well as
+`list_work_items`: "PQL and structured filters are not supported
 on this Plane edition. Remove the pql/filters parameter and filter results client-side..." Call
 it with only `project_id`, `expand`, an explicit `fields` list and an explicit `per_page=100`
 instead - filter and sort yourself over the full result. If a trimmed page still exceeds the

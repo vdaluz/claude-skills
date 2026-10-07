@@ -10,7 +10,7 @@ Arguments: what changed (1 sentence), the page(s)/flow it affects.
 
 ## Prerequisite
 
-This skill depends on the `playwright` MCP server. For it to launch your real installed browser (recommended, so what you see matches what a user sees, rather than Playwright's bundled Chromium): `npx @playwright/mcp@latest --browser chrome` (or your browser of choice), configured user-level in your Claude Code MCP config. If the `browser_*` MCP tools aren't available, the server didn't load — check `claude mcp list` and confirm the target browser is installed.
+This skill depends on the `playwright` MCP server. For it to launch your real installed browser (recommended, so what you see matches what a user sees, rather than Playwright's bundled Chromium): `npx @playwright/mcp@<version> --browser chrome` (or your browser of choice), configured user-level in your Claude Code MCP config. Pin a specific version rather than `@latest`, so a new upstream release can't run on your machine before you have reviewed it. If the `browser_*` MCP tools aren't available, the server didn't load. Check `claude mcp list` and confirm the target browser is installed.
 
 ## Steps
 
